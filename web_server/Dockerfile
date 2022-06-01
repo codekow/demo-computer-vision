@@ -2,7 +2,7 @@ FROM ubi8/python-38:latest
 RUN pip3 install flask requests bs4 flask_restful waitress
 USER root
 COPY flask flask
-ENV FLASK_APP=flask/spp.py
+ENV FLASK_APP=flask/app.py
 ENV FLASK_ENV=development
 ENV FLASK_DEBUG=1
 ENV CAPTURE_PATH=/opt/app-root/src/flask/static
