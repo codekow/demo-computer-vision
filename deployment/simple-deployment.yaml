@@ -1,0 +1,194 @@
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: pvc-simplevis
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   volumeMode: Filesystem
+#   resources:
+#     requests:
+#       storage: 8Gi
+#   storageClassName: thin
+
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: pvc-experiment-runs
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   volumeMode: Filesystem
+#   resources:
+#     requests:
+#       storage: 8Gi
+#   storageClassName: thin
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: simplevis-deployment
+  annotations:
+    alpha.image.policy.openshift.io/resolve-names: '*'
+    app.openshift.io/route-disabled: 'false'
+    deployment.kubernetes.io/revision: '1'
+  namespace: simplevis
+  labels:
+    app: simplevis
+    app.kubernetes.io/component: simplevis-full
+    app.kubernetes.io/instance: simplevis-full
+    app.kubernetes.io/name: simplevis-full
+    app.kubernetes.io/part-of: simplevis-full-app
+    app.openshift.io/runtime-namespace: simplevis
+spec:
+  restartPolicy: Never
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simplevis
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: simplevis
+        deploymentconfig: simplevis
+    spec:
+      containers:
+        - name: simplevis-full
+          image: pn-50.davenet.local:8080/repository/simplevis/simplevis-full:1.1.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data/simplevis
+              name: simplevis-data
+            - mountPath: /opt/app-root/src/yolov5/runs
+              name: simplevis-exp
+          resources: {}
+          env:
+            - name: FLASK_APP
+              value: flask/main.py
+            - name: FLASK_ENV
+              value: development
+            - name: FLASK_DEBUG
+              value: "1"
+            - name: CAPTURE_PATH
+              value: /data/simplevis
+            - name: YOLODIR
+              value: /opt/app-root/src/yolov5          
+          imagePullPolicy: IfNotPresent
+      volumes:
+        - name: simplevis-data
+          persistentVolumeClaim:
+            claimName: pvc-experiment-runs
+        - name: simplevis-exp
+          persistentVolumeClaim:
+            claimName: pvc-simplevis
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simplevis-service
+spec:
+  selector:
+    app: simplevis
+  ports:
+    - protocol: TCP
+      port: 5000
+  readinessProbe:
+    tcpSocket:
+      port: 5000
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: simplevis-web-deployment
+  annotations:
+    alpha.image.policy.openshift.io/resolve-names: '*'
+    app.openshift.io/route-disabled: 'false'
+    deployment.kubernetes.io/revision: '1'
+  namespace: simplevis
+  labels:
+    app: simplevis-web
+    app.kubernetes.io/component: simplevis-full
+    app.kubernetes.io/instance: simplevis-full
+    app.kubernetes.io/name: simplevis-full
+    app.kubernetes.io/part-of: simplevis-full-app
+    app.openshift.io/runtime-namespace: simplevis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simplevis-web
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: simplevis-web
+        deploymentconfig: simplevis-full
+    spec:
+      containers:
+        - name: web-serv
+          image: pn-50.davenet.local:8080/repository/simplevis/web-serv:1.1.1
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /opt/app-root/src/flask/static
+              name: simplevis-data
+          resources: {}
+          env:
+            - name: FLASK_APP
+              value: flask/app.py
+            - name: FLASK_ENV
+              value: development
+            - name: FLASK_DEBUG
+              value: "1"
+            - name: CAPTURE_PATH
+              value: /opt/app-root/src/flask/static
+            - name: YOLODIR
+              value: /opt/app-root/src/yolov5
+            - name: UPLOAD_FOLDER
+              value: /opt/app-root/src/flask/static/incoming
+            - name: MODEL_SERVER
+              value: "http://simplevis-service:5000"              
+          imagePullPolicy: IfNotPresent
+      volumes:
+        - name: simplevis-data
+          persistentVolumeClaim:
+            claimName: pvc-simplevis
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+spec:
+  selector:
+    app: simplevis-web
+  ports:
+    - protocol: TCP
+      port: 5000
+  readinessProbe:
+    tcpSocket:
+      port: 5000
+    initialDelaySeconds: 5
+    periodSeconds: 10
