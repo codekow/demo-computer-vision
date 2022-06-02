@@ -50,8 +50,8 @@ def detect():
     shutil.copy(xfile, nXfile)
 
   # Delete detected files. TODO only delete when successful
-  if os.path.exists(yolodir+"/runs"):
-    shutil.rmtree(yolodir+"/runs")
+  if os.path.exists(yolodir+"/runs/detect"):
+    shutil.rmtree(yolodir+"/runs/detect")
 
 
   return [{'incoming': infiles}, {'detect_list': detect_list}]

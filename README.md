@@ -76,14 +76,9 @@ podman build -t simplevis-full .
 ## Running the capture container in podman
 To enable access to an attached camera, the container must be launched with the "device" argument. ex: "`--device /dev/video0`".
 
-The podman deployment will create a pod and two volumes for persistance and sharing between the servers. You can replace the volumes with paths on your node if you like.
+The podman deployment will create a container and two volumes for persistance and detection iterations. You can replace the volumes with paths on your node if you like.
 
-Create the pod
-```
-podman pod create -n simplevis -p 5001:5001 --device /dev/video0
-```
-
-Deploy the model serving container to the pod
+Deploy the full simplevis container
 ```
 podman run -d \
 --name simplevis-full \
@@ -92,6 +87,42 @@ podman run -d \
 -p 5001:5001 \
 simplevis-full:latest
 ```
+
+## Deploying on OpenShift
+Currently, only the `simplevis-full` container is deployable to OpenShift and access to an attached camera is not supported, but images can be uploaded via the `upload` button in the web app. 
+
+Prerequisites:
+- Connectivity to an instance of OCP
+- Access to a registry accessible by OCP
+- Images built in previous steps
+
+Deploy to OCP
+
+1. Tag and push the image for the repository where the image will be deployed
+```
+podman tag simplevis-full:latest my.repo.com:5000/myrepository/simplevis-full:latest
+podman tag my.repo.com:5000/myrepository/simplevis-full:latest
+```
+
+2. In the `depolyment` directory, modify `simplevis-deployment.yaml` to match your image tag.
+```
+containers:
+- name: simplevis-full
+    image: my.repo.com:5000/myrepository/simplevis-full:latest
+```
+
+3. Create the PVCs for the deployment.
+```
+oc create -f simplevis-storage.yml
+```
+
+4. Deploy the application to OCP.
+```
+oc create -f simplevis-deployment.yaml
+```
+
+Upon successful deployment you should see a route to the new app. Clicking the link should open up the web app.
+
 
 
 ## Accessing the application
