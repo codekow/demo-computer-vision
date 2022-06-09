@@ -46,9 +46,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.context_processor
 def inject_user():
-    infiles = glob.glob(filepath+"/incoming/*.jpg")
-    dtfiles = glob.glob(filepath+"/detected/*.jpg")
-    captured = glob.glob(filepath+"/captured/*.jpg")
+    infiles = glob.glob(filepath+"/incoming/*")
+    dtfiles = glob.glob(filepath+"/detected/*")
+    captured = glob.glob(filepath+"/captured/*")
     incoming_files = []
     detected_files = []
     captured_files = []

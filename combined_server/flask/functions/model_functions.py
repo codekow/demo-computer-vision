@@ -13,7 +13,7 @@ def detect():
   filepath = os.getenv('CAPTURE_PATH')
   yolodir = os.getenv('YOLODIR')
 
-  infiles = glob.glob(filepath+"/incoming/*.jpg")
+  infiles = glob.glob(filepath+"/incoming/*")
    
   # Create directory if it's not there
   cdir = filepath+'/captured'
@@ -36,7 +36,7 @@ def detect():
     os.wait()
 
   # Gather all the processed files
-  exfiles = glob.glob(yolodir+"/runs/detect/exp*/*.jpg")
+  exfiles = glob.glob(yolodir+"/runs/detect/exp*/*")
   
   # Create directory if it's not there
   detdir = filepath+'/detected'
