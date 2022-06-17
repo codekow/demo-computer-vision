@@ -1,6 +1,10 @@
 # simple vision
 Simple sample computer vision demo for edge devices. This sample application is built around the yolov5 pre-trained model for object detection in a image and/or video. 
 
+## Release 1.2.3
+- Updated deployments
+- Added public image
+
 ## Release 1.2.2
 - Allow different file types
 
@@ -52,7 +56,8 @@ Simple sample computer vision demo for edge devices. This sample application is 
 
 ## TODO
 - Organize README.md file
-- Create deployment for model container for OpenShift
+- Add file type restrictions to limit upload
+- Add video file capability
 
 ## Building the containers
 The containers used depends on the type of deployment and the location/configuration of any cameras. If the target environment is a single node with camera attached directly running podman, follow the instructions for `combined server`. If the camera is connected to a different device than the server running the model, follow the instructions for `multi server`

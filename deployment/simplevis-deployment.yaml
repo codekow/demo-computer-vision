@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: simplevis-full
-          image: pn-50.davenet.local:8080/repository/simplevis/simplevis-full:1.2.1
+          image: quay.io/dawhite20910/simplevis:1.2.3
           imagePullPolicy: Always
           ports:
             - containerPort: 5001
