@@ -1,0 +1,74 @@
+# Create the lvm volumes before running. Make sure local storage operator is installed.
+# pvcreate /dev/sda
+# vgcreate /dev/vg01 /dev/sda
+# lvcreate -L +8G --name simplevis-data vg01
+# lvcreate -L +8G --name simplevis-runs vg01
+# mkfs -t xfs /dev/vg01/simplevis-data
+# mkfs -t xfs /dev/vg01/simplevis-runs
+---
+apiVersion: "local.storage.openshift.io/v1"
+kind: "LocalVolume"
+metadata:
+  name: "local-disks-simplevis-data"
+  namespace: "openshift-local-storage"
+spec:
+  nodeSelector:
+    nodeSelectorTerms:
+    - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - ocpsno.davenet.local
+  storageClassDevices:
+    - storageClassName: "local-sc-simplevis-data"
+      volumeMode: Filesystem
+      fsType: xfs
+      devicePaths:
+        - /dev/vg01/simplevis-data
+---
+apiVersion: "local.storage.openshift.io/v1"
+kind: "LocalVolume"
+metadata:
+  name: "local-disks-simplevis-runs"
+  namespace: "openshift-local-storage"
+spec:
+  nodeSelector:
+    nodeSelectorTerms:
+    - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - ocpsno.davenet.local
+  storageClassDevices:
+    - storageClassName: "local-sc-simplevis-runs"
+      volumeMode: Filesystem
+      fsType: xfs
+      devicePaths:
+        - /dev/vg01/simplevis-runs
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-simplevis
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: local-sc-simplevis-data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-experiment-runs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: local-sc-simplevis-runs
