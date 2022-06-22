@@ -1,0 +1,105 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: simplevis-deployment
+  annotations:
+    alpha.image.policy.openshift.io/resolve-names: '*'
+    app.openshift.io/route-disabled: 'false'
+    deployment.kubernetes.io/revision: '1'
+  namespace: simplevis
+  labels:
+    app: simplevis
+    app.kubernetes.io/component: simplevis-full
+    app.kubernetes.io/instance: simplevis-full
+    app.kubernetes.io/name: simplevis-full
+    app.kubernetes.io/part-of: simplevis-full-app
+    app.openshift.io/runtime-namespace: simplevis
+spec:
+  restartPolicy: Never
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simplevis
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: simplevis
+        deploymentconfig: simplevis
+    spec:
+      containers:
+        - name: simplevis-full
+          image: quay.io/dawhite20910/simplevis:1.2.3.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5001
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /opt/app-root/src/flask/static
+              name: simplevis-data
+            - mountPath: /opt/app-root/src/yolov5/runs
+              name: experiment-runs
+          resources: {}
+          env:
+            - name: FLASK_APP
+              value: flask/main.py
+            - name: FLASK_ENV
+              value: development
+            - name: FLASK_DEBUG
+              value: "1"
+            - name: CAPTURE_PATH
+              value: /opt/app-root/src/flask/static
+            - name: YOLODIR
+              value: /opt/app-root/src/yolov5
+            - name: UPLOAD_FOLDER
+              value: /opt/app-root/src/flask/static/incoming
+            - name: MODEL_SERVER
+              value: "http://localhost:5001"
+            - name: ENVIRONMENT_NAME
+              value: "SNO"
+          imagePullPolicy: Always
+      volumes:
+        - name: simplevis-data
+          persistentVolumeClaim:
+            claimName: pvc-simplevis
+        - name: experiment-runs
+          persistentVolumeClaim:
+            claimName: pvc-experiment-runs
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simplevis-service
+spec:
+  selector:
+    app: simplevis
+  ports:
+    - protocol: TCP
+      port: 5001
+  readinessProbe:
+    tcpSocket:
+      port: 5001
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: simplevis-web
+spec:
+  host: web-simplevis.apps.ocpsno.davenet.local
+  to:
+    kind: Service
+    name: simplevis-service
+    weight: 100
+  port:
+    targetPort: 5001
+  wildcardPolicy: None

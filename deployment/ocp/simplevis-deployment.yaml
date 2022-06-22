@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: simplevis-full
-          image: quay.io/dawhite20910/simplevis:1.2.3
+          image: quay.io/dawhite20910/simplevis:1.2.3.1
           imagePullPolicy: Always
           ports:
             - containerPort: 5001
@@ -56,6 +56,8 @@ spec:
               value: /opt/app-root/src/flask/static/incoming
             - name: MODEL_SERVER
               value: "http://localhost:5001"
+            - name: ENVIRONMENT_NAME
+              value: "OpenShift"
           imagePullPolicy: Always
       volumes:
         - name: simplevis-data
