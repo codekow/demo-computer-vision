@@ -22,6 +22,7 @@ yolodir = os.getenv('YOLODIR')
 UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
 ALLOWED_EXTENSIONS = {'jpg'}
 model_server = os.getenv('MODEL_SERVER')
+environment_name = os.getenv('ENVIRONMENT_NAME')
 
 class Test(Resource):
     def get(self):
@@ -61,7 +62,7 @@ def inject_user():
     for d in captured:
         ename = os.path.basename(d)
         captured_files.append(ename)
-    return dict(incoming=incoming_files, detected=detected_files, captured=captured_files)
+    return dict(incoming=incoming_files, detected=detected_files, captured=captured_files, environment_name=environment_name)
 @app.route('/')    
 def web_hello():
     return render_template('index.html')
