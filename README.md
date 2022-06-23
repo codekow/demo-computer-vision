@@ -1,6 +1,8 @@
 # simple vision
 Simple sample computer vision demo for edge devices. This sample application is built around the yolov5 pre-trained model for object detection in a image and/or video. 
 
+## Release 1.2.4
+- Added HTML template to spruce up UI
 ## Release 1.2.3.1
 - Added storage deployment if deploying to SNO
 - Reorganized deployment dir
@@ -153,9 +155,9 @@ When developing locally set the following environment variables before launching
 export FLASK_APP=flask/main.py
 export FLASK_ENV=development
 export FLASK_DEBUG=1
-export CAPTURE_PATH=/root/workspace/rh_repos/simplevis/flask/static
+export CAPTURE_PATH=/root/workspace/rh_repos/simplevis/combined_server/flask/static
 export YOLODIR=/root/workspace/yolov5
-export UPLOAD_FOLDER=/root/workspace/rh_repos/simplevis/flask/static/incoming
+export UPLOAD_FOLDER=/root/workspace/rh_repos/simplevis/combined_server/flask/static/incoming
 export MODEL_SERVER="http://localhost:5001"
 export ENVIRONMENT_NAME="RHEL+Podman"
 ```

@@ -63,9 +63,13 @@ def inject_user():
         ename = os.path.basename(d)
         captured_files.append(ename)
     return dict(incoming=incoming_files, detected=detected_files, captured=captured_files, environment_name=environment_name)
-@app.route('/')    
+@app.route('/')
 def web_hello():
     return render_template('index.html')
+
+@app.route('/demo1')
+def web_demo1():
+    return render_template('demo1.html')
 
 @app.route('/capture')
 def web_capture():
