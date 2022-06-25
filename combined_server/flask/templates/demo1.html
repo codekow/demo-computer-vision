@@ -69,19 +69,46 @@
                                             <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="...">
                                             {% endif %}
                                             <div class="card-body p-2">
-                                                <a href="#"><div class="badge bg-primary bg-gradient rounded-pill mb-2">Camera</div></a>
-                                                <!-- <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">Blog post title</div></a> -->
-                                                <p class="card-text mb-0">Capture from an attached camera.</p>
-                                            </div>
-                                            <div class="card-body p-2">
-                                                <a href="#"><div class="badge bg-primary bg-gradient rounded-pill mb-2">Upload</div></a>
-                                                <!-- <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">Blog post title</div></a> -->
-                                                <p class="card-text mb-0">Upload an image or video for analysis.</p>
-                                            </div>
-                                            <div class="card-body p-2">
-                                                <a href="#"><div class="badge bg-primary bg-gradient rounded-pill mb-2">Process</div></a>
-                                                <!-- <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">Blog post title</div></a> -->
-                                                <p class="card-text mb-0">Perform object detection on captured image or video.</p>
+                                                <ul class="list-unstyled mb-4">
+                                                    <li class="mb-2">
+                                                        <!-- <i class="bi bi-check text-primary"></i> -->
+                                                        <strong>Capture Source</strong>
+                                                    </li>
+                                                    <li class="mb2-2">
+                                                        <div class="form-check-inline">
+                                                            <input onclick="captureType('file')" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked/>
+                                                            <label class="form-check-label" for="flexRadioDefault1"> File </label>
+                                                        </div>
+                                                        <div class="form-check-inline">
+                                                            <input onclick="captureType('cam')" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"/>
+                                                            <label class="form-check-label" for="flexRadioDefault2"> Camera </label>
+                                                        </div>
+                                                    </li>
+                                                    <li class="mb2-2">    
+                                                        <div id="filestuff">
+                                                            <div class="row" style="padding-top: 10px;">
+                                                                <div class="col-sm">
+                                                                <!-- <label for="formFile" class="form-label">Disabled file input example</label> -->
+                                                                <input class="form-control-sm" type="file" id="customFile"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row" style="padding-top: 10px;">
+                                                                <div class="col col text-center">
+                                                                    <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#">Upload</a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="mb2-2">    
+                                                        <div id="camstuff" style="display: none;">
+                                                            <div class="row" style="padding-top: 10px;">
+                                                                <div class="col-sm card-text">Smile for the camera!</div>
+                                                                <div class="row"></div>
+                                                                <div class="col col text-center">
+                                                                    <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#">Capture</a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                     <!-- </div> -->
@@ -100,12 +127,15 @@
                                     <div class="card h-100 shadow border-0" style="padding-top: 10px;">
                                         <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="...">
                                         <div class="card-body p-2">
-                                            <p class="card-text mb-0">Click to view.</p>
-                                            <p></p>
-                                            <div class="small text-uppercase fw-bold">File Name</div>
-                                            <p class="card-text mb-0 p-3">nameofmyfile.jpg</p>
-                                            <div class="small text-uppercase fw-bold">File Type</div>
-                                            <p class="card-text mb-0 p-3">Image</p>
+                                            <div class="row">
+                                                <div class="col-sm small text-uppercase fw-bold">File Name</div>
+                                                <div class="col-sm card-text">myfile.jpg</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm small text-uppercase fw-bold">File Type</div>
+                                                <div class="col-sm card-text">Image</div>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -169,5 +199,19 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="static/js/scripts.js"></script>
+        <script>
+            function captureType(typ) {
+              var fl = document.getElementById("filestuff");
+              var cam = document.getElementById("camstuff");
+              if (typ === "file") {
+                fl.style.display = "block";
+                cam.style.display = "none";
+              }
+              if (typ === "cam") {
+                cam.style.display = "block";
+                fl.style.display = "none";
+              }
+            }            
+        </script>
     </body>
 </html>
