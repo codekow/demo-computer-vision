@@ -84,19 +84,23 @@
                                                             <label class="form-check-label" for="flexRadioDefault2"> Camera </label>
                                                         </div>
                                                     </li>
-                                                    <li class="mb2-2">    
-                                                        <div id="filestuff">
-                                                            <div class="row" style="padding-top: 10px;">
-                                                                <div class="col-sm">
-                                                                <!-- <label for="formFile" class="form-label">Disabled file input example</label> -->
-                                                                <input class="form-control-sm" type="file" id="customFile"/>
+                                                    <li class="mb2-2">
+                                                        <form action = "/uploader" method = "POST" enctype = "multipart/form-data">
+                                                            <div id="filestuff">
+                                                                <div class="row" style="padding-top: 10px;">
+                                                                    <div class="col-sm">
+                                                                    <!-- <label for="formFile" class="form-label">Disabled file input example</label> -->
+                                                                    <input class="form-control-sm" type="file" id="customFile" name="file"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="padding-top: 10px;">
+                                                                    <div class="col col text-center">
+                                                                        <!-- <a class="btn btn-primary btn-lg px-4 me-sm-3" type="submit">Upload</a> -->
+                                                                        <input class="btn btn-primary" type="submit" value="Upload">
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="row" style="padding-top: 10px;">
-                                                                <div class="col col text-center">
-                                                                    <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#">Upload</a>
-                                                            </div>
-                                                        </div>
+                                                        </form>
                                                     </li>
                                                     <li class="mb2-2">    
                                                         <div id="camstuff" style="display: none;">

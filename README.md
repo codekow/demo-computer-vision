@@ -5,6 +5,7 @@ Simple sample computer vision demo for edge devices. This sample application is 
 - Added HTML template to spruce up UI
 - Added single image demo page
 - Added controls for capture
+- Upload only stores one file at a time
 ## Release 1.2.3.1
 - Added storage deployment if deploying to SNO
 - Reorganized deployment dir

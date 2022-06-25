@@ -74,7 +74,7 @@ def web_demo1():
 @app.route('/capture')
 def web_capture():
     resp = requests.get(url=model_server+"/model/capture")
-    return render_template('index.html')
+    return render_template('demo1.html')
 
 @app.route('/detect')
 def web_detect():
@@ -83,6 +83,10 @@ def web_detect():
 
 @app.route('/uploader', methods = ['GET', 'POST'])
 def web_upload_file():
+    # Delete any leftover uploads
+    if os.path.exists(UPLOAD_FOLDER):
+        shutil.rmtree(UPLOAD_FOLDER)
+
     isExist = os.path.exists(UPLOAD_FOLDER)
     if not isExist:
         os.mkdir(UPLOAD_FOLDER)
@@ -90,7 +94,7 @@ def web_upload_file():
     if request.method == 'POST':
         f = request.files['file']
         f.save(UPLOAD_FOLDER+'/'+f.filename)
-        return render_template('index.html')
+        return render_template('demo1.html')
 
 if __name__ == "__main__":
     serve(app, host='0.0.0.0', port=5001)
