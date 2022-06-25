@@ -5,6 +5,8 @@ from waitress import serve, logging
 import requests
 import os
 import glob
+from bs4 import BeautifulSoup
+from html import unescape
 
 from functions.capture_functions import *
 from functions.model_functions import *
@@ -23,6 +25,15 @@ UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
 ALLOWED_EXTENSIONS = {'jpg'}
 model_server = os.getenv('MODEL_SERVER')
 environment_name = os.getenv('ENVIRONMENT_NAME')
+
+#get content for header navigation
+text_file = open(filepath + "/navigation.txt", "r")
+#read whole file to a string
+s = text_file.read()
+header_nav = BeautifulSoup(unescape(s), 'lxml')
+#close file
+text_file.close()
+
 
 class Test(Resource):
     def get(self):
@@ -48,8 +59,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.context_processor
 def inject_user():
     infiles = glob.glob(filepath+"/incoming/*")
-    dtfiles = glob.glob(filepath+"/detected/*")
-    captured = glob.glob(filepath+"/captured/*")
+    dtfiles = reversed(glob.glob(filepath+"/detected/*"))
+    captured = reversed(glob.glob(filepath+"/captured/*"))
     incoming_files = []
     detected_files = []
     captured_files = []
@@ -62,7 +73,7 @@ def inject_user():
     for d in captured:
         ename = os.path.basename(d)
         captured_files.append(ename)
-    return dict(incoming=incoming_files, detected=detected_files, captured=captured_files, environment_name=environment_name)
+    return dict(incoming=incoming_files, detected=detected_files, captured=captured_files, environment_name=environment_name, header_nav=header_nav)
 @app.route('/')
 def web_hello():
     return render_template('index.html')
@@ -70,6 +81,10 @@ def web_hello():
 @app.route('/demo1')
 def web_demo1():
     return render_template('demo1.html')
+
+@app.route('/gallery')
+def web_gallery():
+    return render_template('gallery.html')
 
 @app.route('/capture')
 def web_capture():
@@ -79,7 +94,7 @@ def web_capture():
 @app.route('/detect')
 def web_detect():
     resp = requests.get(url=model_server+"/model/detect")
-    return render_template('index.html')
+    return render_template('gallery.html')
 
 @app.route('/uploader', methods = ['GET', 'POST'])
 def web_upload_file():
