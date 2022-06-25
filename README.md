@@ -10,6 +10,8 @@ Simple sample computer vision demo for edge devices. This sample application is 
 - Connected detect to capture page
 - Replaced capture page
 - Updated menus
+- Added template assets
+- Updated iage paths in html templates
 ## Release 1.2.3.1
 - Added storage deployment if deploying to SNO
 - Reorganized deployment dir
@@ -104,7 +106,7 @@ Deploy the full simplevis container
 ```
 podman run -d \
 --name simplevis-full \
--v simplevis:/opt/app-root/src/flask/static \
+-v simplevis:/opt/app-root/src/flask/static/workdir \
 --device /dev/video0 \
 -p 5001:5001 \
 simplevis-full:latest
@@ -162,9 +164,9 @@ When developing locally set the following environment variables before launching
 export FLASK_APP=flask/main.py
 export FLASK_ENV=development
 export FLASK_DEBUG=1
-export CAPTURE_PATH=/root/workspace/rh_repos/simplevis/combined_server/flask/static
+export CAPTURE_PATH=/root/workspace/rh_repos/simplevis/combined_server/flask/static/workdir
 export YOLODIR=/root/workspace/yolov5
-export UPLOAD_FOLDER=/root/workspace/rh_repos/simplevis/combined_server/flask/static/incoming
+export UPLOAD_FOLDER=/root/workspace/rh_repos/simplevis/combined_server/flask/static/workdir/incoming
 export MODEL_SERVER="http://localhost:5001"
 export ENVIRONMENT_NAME="RHEL+Podman"
 ```

@@ -26,15 +26,6 @@ ALLOWED_EXTENSIONS = {'jpg'}
 model_server = os.getenv('MODEL_SERVER')
 environment_name = os.getenv('ENVIRONMENT_NAME')
 
-#get content for header navigation
-text_file = open(filepath + "/navigation.txt", "r")
-#read whole file to a string
-s = text_file.read()
-header_nav = BeautifulSoup(unescape(s), 'lxml')
-#close file
-text_file.close()
-
-
 class Test(Resource):
     def get(self):
         x = test()
@@ -73,7 +64,7 @@ def inject_user():
     for d in captured:
         ename = os.path.basename(d)
         captured_files.append(ename)
-    return dict(incoming=incoming_files, detected=detected_files, captured=captured_files, environment_name=environment_name, header_nav=header_nav)
+    return dict(incoming=incoming_files, detected=detected_files, captured=captured_files, environment_name=environment_name)
 @app.route('/')
 def web_hello():
     return render_template('index.html')

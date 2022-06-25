@@ -12,9 +12,9 @@ COPY flask flask
 ENV FLASK_APP=flask/main.py
 ENV FLASK_ENV=development
 ENV FLASK_DEBUG=1
-ENV CAPTURE_PATH=/opt/app-root/src/flask/static
+ENV CAPTURE_PATH=/opt/app-root/src/flask/static/workdir
 ENV YOLODIR=/opt/app-root/src/yolov5
-ENV UPLOAD_FOLDER=/opt/app-root/src/flask/static/incoming
+ENV UPLOAD_FOLDER=/opt/app-root/src/flask/static/workdir/incoming
 ENV MODEL_SERVER="http://localhost:5001"
 ENV ENVIRONMENT_NAME="RHEL+Podman"
 
