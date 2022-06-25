@@ -8,6 +8,8 @@ Simple sample computer vision demo for edge devices. This sample application is 
 - Upload only stores one file at a time
 - Added gallery page
 - Connected detect to capture page
+- Replaced capture page
+- Updated menus
 ## Release 1.2.3.1
 - Added storage deployment if deploying to SNO
 - Reorganized deployment dir

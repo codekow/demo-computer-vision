@@ -80,7 +80,7 @@ def web_hello():
 
 @app.route('/demo1')
 def web_demo1():
-    return render_template('demo1.html')
+    return render_template('capture.html')
 
 @app.route('/gallery')
 def web_gallery():
@@ -89,7 +89,7 @@ def web_gallery():
 @app.route('/capture')
 def web_capture():
     resp = requests.get(url=model_server+"/model/capture")
-    return render_template('demo1.html')
+    return render_template('capture.html')
 
 @app.route('/detect')
 def web_detect():
@@ -109,7 +109,7 @@ def web_upload_file():
     if request.method == 'POST':
         f = request.files['file']
         f.save(UPLOAD_FOLDER+'/'+f.filename)
-        return render_template('demo1.html')
+        return render_template('capture.html')
 
 if __name__ == "__main__":
     serve(app, host='0.0.0.0', port=5001)
