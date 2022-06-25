@@ -56,148 +56,93 @@
                         <!-- Pricing card free-->
                         <div class="col-lg-6 col-xl-4">
                             <div class="card mb-5 mb-xl-0">
-                                <div class="card-body p-5">
+                                <div class="card-body p-5" style="height: 550px;">
                                     <div class="small text-uppercase fw-bold">
                                         <i class="bi bi-star-fill text-warning"></i>
                                         Capture
                                     </div>
-                                    <div class="mb-3">
-                                        <span class="display-4 fw-bold">$0</span>
-                                        <span class="text-muted">/ mo.</span>
-                                    </div>
-                                    <ul class="list-unstyled mb-4">
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            <strong>1 users</strong>
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            5GB storage
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Unlimited public projects
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Community access
-                                        </li>
-                                        <li class="mb-2 text-muted">
-                                            <i class="bi bi-x"></i>
-                                            Unlimited private projects
-                                        </li>
-                                        <li class="mb-2 text-muted">
-                                            <i class="bi bi-x"></i>
-                                            Dedicated support
-                                        </li>
-                                        <li class="mb-2 text-muted">
-                                            <i class="bi bi-x"></i>
-                                            Free linked domain
-                                        </li>
-                                        <li class="text-muted">
-                                            <i class="bi bi-x"></i>
-                                            Monthly status reports
-                                        </li>
-                                    </ul>
-                                    <div class="d-grid"><a class="btn btn-outline-primary" href="#!">Process Image</a></div>
+                                    <!-- <div class="col-lg-4 mb-5"> -->
+                                        <div class="card h-100 shadow border-0" style="padding-top: 10px;">
+                                            {% if incoming %}
+                                            <a href="/static/incoming/{{incoming[0]}}"><img class="card-img-top" src="/static/incoming/{{incoming[0]}}" alt="{{incoming[0]}}"></a>
+                                            {% else %}
+                                            <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="...">
+                                            {% endif %}
+                                            <div class="card-body p-2">
+                                                <a href="#"><div class="badge bg-primary bg-gradient rounded-pill mb-2">Camera</div></a>
+                                                <!-- <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">Blog post title</div></a> -->
+                                                <p class="card-text mb-0">Capture from an attached camera.</p>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                <a href="#"><div class="badge bg-primary bg-gradient rounded-pill mb-2">Upload</div></a>
+                                                <!-- <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">Blog post title</div></a> -->
+                                                <p class="card-text mb-0">Upload an image or video for analysis.</p>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                <a href="#"><div class="badge bg-primary bg-gradient rounded-pill mb-2">Process</div></a>
+                                                <!-- <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">Blog post title</div></a> -->
+                                                <p class="card-text mb-0">Perform object detection on captured image or video.</p>
+                                            </div>
+                                        </div>
+                                    <!-- </div> -->
+                                    <!-- <div class="d-grid"><a class="btn btn-outline-primary" href="#!">Process Image</a></div> -->
                                 </div>
                             </div>
                         </div>
                         <!-- Pricing card pro-->
-                        <div class="col-lg-6 col-xl-4">
+                        <div class="col-lg- col-xl-4">
                             <div class="card mb-5 mb-xl-0">
-                                <div class="card-body p-5">
+                                <div class="card-body p-5" style="height: 550px;">
                                     <div class="small text-uppercase fw-bold">
                                         <!-- <i class="bi bi-star-fill text-warning"></i> -->
                                         Original Source
                                     </div>
-                                    <div class="mb-3">
-                                        <span class="display-4 fw-bold">$9</span>
-                                        <span class="text-muted">/ mo.</span>
+                                    <div class="card h-100 shadow border-0" style="padding-top: 10px;">
+                                        <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="...">
+                                        <div class="card-body p-2">
+                                            <p class="card-text mb-0">Click to view.</p>
+                                            <p></p>
+                                            <div class="small text-uppercase fw-bold">File Name</div>
+                                            <p class="card-text mb-0 p-3">nameofmyfile.jpg</p>
+                                            <div class="small text-uppercase fw-bold">File Type</div>
+                                            <p class="card-text mb-0 p-3">Image</p>
+                                        </div>
                                     </div>
-                                    <ul class="list-unstyled mb-4">
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            <strong>5 users</strong>
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            5GB storage
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Unlimited public projects
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Community access
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Unlimited private projects
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Dedicated support
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Free linked domain
-                                        </li>
-                                        <li class="text-muted">
-                                            <i class="bi bi-x"></i>
-                                            Monthly status reports
-                                        </li>
-                                    </ul>
-                                    <div class="d-grid"><a class="btn btn-primary" href="#!">Choose plan</a></div>
                                 </div>
                             </div>
                         </div>
                         <!-- Pricing card enterprise-->
                         <div class="col-lg-6 col-xl-4">
                             <div class="card">
-                                <div class="card-body p-5">
+                                <div class="card-body p-5" style="height: 550px;">
                                     <div class="small text-uppercase fw-bold text-muted">Processed</div>
-                                    <div class="mb-3">
+                                    <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="...">
+                                    <!-- <div class="mb-3">
                                         <span class="display-4 fw-bold">$49</span>
                                         <span class="text-muted">/ mo.</span>
-                                    </div>
+                                    </div> -->
                                     <ul class="list-unstyled mb-4">
                                         <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            <strong>Unlimited users</strong>
+                                            <!-- <i class="bi bi-check text-primary"></i> -->
+                                            <strong>Detected Objects</strong>
                                         </li>
                                         <li class="mb-2">
                                             <i class="bi bi-check text-primary"></i>
-                                            5GB storage
+                                            3 Persons
                                         </li>
                                         <li class="mb-2">
                                             <i class="bi bi-check text-primary"></i>
-                                            Unlimited public projects
+                                            1 Lamp
                                         </li>
                                         <li class="mb-2">
                                             <i class="bi bi-check text-primary"></i>
-                                            Community access
+                                            1 Bottle
                                         </li>
                                         <li class="mb-2">
                                             <i class="bi bi-check text-primary"></i>
-                                            Unlimited private projects
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Dedicated support
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-primary"></i>
-                                            <strong>Unlimited</strong>
-                                            linked domains
-                                        </li>
-                                        <li class="text-muted">
-                                            <i class="bi bi-check text-primary"></i>
-                                            Monthly status reports
+                                            1 Bus
                                         </li>
                                     </ul>
-                                    <div class="d-grid"><a class="btn btn-outline-primary" href="#!">Choose plan</a></div>
                                 </div>
                             </div>
                         </div>
@@ -223,6 +168,6 @@
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
+        <script src="static/js/scripts.js"></script>
     </body>
 </html>
