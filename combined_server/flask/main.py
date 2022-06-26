@@ -41,9 +41,15 @@ class Detect(Resource):
         x = detect()
         return jsonify(x)
 
+class CleanAll(Resource):
+    def get(self):
+        x = cleanall()
+        return jsonify(x)
+
 api.add_resource(Detect,'/model/detect')
 api.add_resource(Test,'/model/test')
 api.add_resource(Capture,'/model/capture')
+api.add_resource(CleanAll,'/cleanall')
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 

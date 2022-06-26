@@ -4,6 +4,8 @@ import cv2
 import shutil
 from datetime import datetime
 
+filepath = os.getenv('CAPTURE_PATH')
+
 def test():
   jsondata = ['this is a test']
   return jsondata
@@ -12,7 +14,6 @@ def capture():
 
   now = datetime.now() # current date and time
   date_time = now.strftime("%Y%m%d-%H%M%S")
-  filepath = os.getenv('CAPTURE_PATH')
 
   # Delete any leftover uploads
   if os.path.exists(filepath+'/incoming'):
@@ -33,3 +34,13 @@ def capture():
 
   jsondata = {'captured': impath }
   return jsondata
+
+def cleanall():
+  if os.path.exists(filepath+'/incoming'):
+    shutil.rmtree(filepath+'/incoming')
+  if os.path.exists(filepath+'/captured'):
+    shutil.rmtree(filepath+'/captured')
+  if os.path.exists(filepath+'/detected'):
+    shutil.rmtree(filepath+'/detected')
+
+  jsondata = {'status': 'cleaned'}

@@ -30,13 +30,13 @@ spec:
     spec:
       containers:
         - name: simplevis-full
-          image: quay.io/dawhite20910/simplevis:1.2.3.1
+          image: quay.io/dawhite20910/simplevis:1.2.4.1
           imagePullPolicy: Always
           ports:
             - containerPort: 5001
               protocol: TCP
           volumeMounts:
-            - mountPath: /opt/app-root/src/flask/static
+            - mountPath: /opt/app-root/src/flask/static/workdir
               name: simplevis-data
             - mountPath: /opt/app-root/src/yolov5/runs
               name: experiment-runs
@@ -49,11 +49,11 @@ spec:
             - name: FLASK_DEBUG
               value: "1"
             - name: CAPTURE_PATH
-              value: /opt/app-root/src/flask/static
+              value: /opt/app-root/src/flask/static/workdir
             - name: YOLODIR
               value: /opt/app-root/src/yolov5
             - name: UPLOAD_FOLDER
-              value: /opt/app-root/src/flask/static/incoming
+              value: /opt/app-root/src/flask/static/workdir/incoming
             - name: MODEL_SERVER
               value: "http://localhost:5001"
             - name: ENVIRONMENT_NAME
