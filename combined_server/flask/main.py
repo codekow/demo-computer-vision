@@ -49,7 +49,7 @@ class CleanAll(Resource):
 api.add_resource(Detect,'/model/detect')
 api.add_resource(Test,'/model/test')
 api.add_resource(Capture,'/model/capture')
-api.add_resource(CleanAll,'/cleanall')
+api.add_resource(CleanAll,'/model/cleanall')
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -92,6 +92,11 @@ def web_capture():
 def web_detect():
     resp = requests.get(url=model_server+"/model/detect")
     return render_template('gallery.html')
+
+@app.route('/cleanall')
+def web_clean():
+    resp = requests.get(url=model_server+"/model/cleanall")
+    return render_template('index.html')
 
 @app.route('/uploader', methods = ['GET', 'POST'])
 def web_upload_file():
