@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Modern Business - Start Bootstrap Template</title>
+        <title>SimpleCV - {{environment_name}}</title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
         <!-- Bootstrap icons-->
@@ -41,7 +41,15 @@
                                     <div class="p-4 p-md-5">
                                         <div class="h2 fw-bolder">Capture an image for processing</div>
                                         <p>Use the methods below to capture images from live or static sources for processing through the object detection model.</p>
-                                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="/detect" aria-disabled="true">Process</a>
+                                        <div id="process_on">
+                                            <a class="btn btn-primary btn-lg px-4 me-sm-3" onclick="showWaiting()" href="/detect" aria-disabled="true">Process</a>
+                                        </div>
+                                        <div id="process_off" style="display: none;">
+                                            <button class="btn btn-primary btn-lg px-4 me-sm-3" aria-disabled="true">
+                                                <span class="spinner-border spinner-border-sm"></span>
+                                                Processing
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-xl-7">
@@ -126,6 +134,15 @@
                 </div>
             </div>
         </footer>
+        <script>
+        function showWaiting() {
+            var pon = document.getElementById("process_on");
+            var poff = document.getElementById("process_off");
+            pon.style.display = "none";
+            poff.style.display = "block";
+        }
+
+        </script>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->

@@ -3,6 +3,7 @@ Simple sample computer vision demo for edge devices. This sample application is 
 
 ## Release 1.2.4.2
 - Added clean all images to reset to starting state
+- Added spinner to indicate processing
 
 ## Release 1.2.4.1
 - Updated deployment files
