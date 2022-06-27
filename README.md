@@ -4,6 +4,8 @@ Simple sample computer vision demo for edge devices. This sample application is 
 ## Release 1.2.4.2
 - Added clean all images to reset to starting state
 - Added spinner to indicate processing
+- Updated deployment yaml
+- Added modal window for file upload
 
 ## Release 1.2.4.1
 - Updated deployment files
@@ -81,6 +83,7 @@ Simple sample computer vision demo for edge devices. This sample application is 
 - Organize README.md file
 - Add file type restrictions to limit upload
 - Add video file capability
+- Fix css for capture page
 
 ## Building the containers
 The containers used depends on the type of deployment and the location/configuration of any cameras. If the target environment is a single node with camera attached directly running podman, follow the instructions for `combined server`. If the camera is connected to a different device than the server running the model, follow the instructions for `multi server`
