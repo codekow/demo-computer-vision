@@ -1,6 +1,8 @@
 # simple vision
 Simple sample computer vision demo for edge devices. This sample application is built around the yolov5 pre-trained model for object detection in a image and/or video. 
 
+## Release 1.2.4.3
+- Added processing time timer
 ## Release 1.2.4.2
 - Added clean all images to reset to starting state
 - Added spinner to indicate processing
@@ -84,6 +86,7 @@ Simple sample computer vision demo for edge devices. This sample application is 
 - Add file type restrictions to limit upload
 - Add video file capability
 - Fix css for capture page
+- Figure out why pod doesn't terminate
 
 ## Building the containers
 The containers used depends on the type of deployment and the location/configuration of any cameras. If the target environment is a single node with camera attached directly running podman, follow the instructions for `combined server`. If the camera is connected to a different device than the server running the model, follow the instructions for `multi server`

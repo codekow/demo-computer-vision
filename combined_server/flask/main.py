@@ -18,6 +18,7 @@ parser = reqparse.RequestParser()
 
 logger = logging.getLogger('waitress')
 logger.setLevel(logging.INFO)
+setup_console_handler = True
 
 filepath = os.getenv('CAPTURE_PATH')
 yolodir = os.getenv('YOLODIR')
@@ -25,7 +26,6 @@ UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
 ALLOWED_EXTENSIONS = {'jpg'}
 model_server = os.getenv('MODEL_SERVER')
 environment_name = os.getenv('ENVIRONMENT_NAME')
-
 class Test(Resource):
     def get(self):
         x = test()
@@ -39,6 +39,7 @@ class Capture(Resource):
 class Detect(Resource):
     def get(self):
         x = detect()
+        logger.info(x[2])
         return jsonify(x)
 
 class CleanAll(Resource):

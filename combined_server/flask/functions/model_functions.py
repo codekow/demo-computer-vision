@@ -4,7 +4,9 @@ import shutil
 import requests
 import glob
 import subprocess
+from timeit import default_timer as timer
 
+time_taken = timer()
 def test():
   jsondata = ['this is a test']
   return jsondata
@@ -29,11 +31,14 @@ def detect():
 
   # # Detect from uploaded images
   for cfile in detect_list:
-    print('python '+yolodir+'/detect.py --weights yolov5s.pt --img 640 --conf 0.25 --source '+cfile)
+    # print('python '+yolodir+'/detect.py --weights yolov5s.pt --img 640 --conf 0.25 --source '+cfile)
+    started = timer()
     dcommand = 'python '+yolodir+'/detect.py --weights yolov5s.pt --img 640 --conf 0.25 --source '+cfile
     # os.wait()
     process = os.popen(dcommand)
     os.wait()
+    ended = timer()
+    time_taken = round(ended - started,2)
 
   # Gather all the processed files
   exfiles = glob.glob(yolodir+"/runs/detect/exp*/*")
@@ -53,5 +58,6 @@ def detect():
   if os.path.exists(yolodir+"/runs/detect"):
     shutil.rmtree(yolodir+"/runs/detect")
 
-
-  return [{'incoming': infiles}, {'detect_list': detect_list}]
+  # ptime = ended - started 
+  # processing_time = ptime.strftime("%H%M%S")
+  return [{'incoming': infiles}, {'detect_list': detect_list}, {'processing_time': time_taken}]
