@@ -1,6 +1,13 @@
 # simple vision
 Simple sample computer vision demo for edge devices. This sample application is built around the yolov5 pre-trained model for object detection in a image and/or video. 
 
+![Alt text](docs/simplevis-figs-3.jpg?raw=true "Overview")
+![Alt text](docs/simplevis-figs-4.jpg?raw=true "Components")
+![Alt text](docs/simplevis-figs-5.jpg?raw=true "Future")
+
+## Release 1.2.4.4
+- Added diagrams to README
+
 ## Release 1.2.4.3
 - Added processing time timer
 - Renamed sno deployment
