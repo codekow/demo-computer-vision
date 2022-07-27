@@ -1,8 +1,13 @@
 # simple vision
-Simple sample computer vision demo for edge devices. This sample application is built around the yolov5 pre-trained model for object detection in a image and/or video. 
+Simple sample computer vision demo for edge devices. This sample application is built around the yolov5 pre-trained model for object detection in an image and/or video. 
 
+The app consists of one container and two volumes or PVC's depending on the deployment platform. Image data can be captured from a directly attached camera (currently only supported in podman), or an uploaded file through the web UI.
 ![Alt text](docs/simplevis-figs-3.jpg?raw=true "Overview")
+
+The WebUI is hosted by Flask and serves up static and dynamic content as well as the endpoints to interact with YOLOv5. Content uploaded through the WebUI is sent to YOLOv5 "detect.py" for processing. Processed files are written to a storage area used by YOLOv5 where they are either assembled into a video file or a single image file before being moved to the WebUI storage and presented to the user. If a web cam is attached, a single frame is captured and processed in the same way.
 ![Alt text](docs/simplevis-figs-4.jpg?raw=true "Components")
+
+Processing of streaming devices is in the works.
 ![Alt text](docs/simplevis-figs-5.jpg?raw=true "Future")
 
 ## Release 1.2.4.4
