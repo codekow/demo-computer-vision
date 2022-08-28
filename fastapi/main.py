@@ -10,8 +10,10 @@ from yaml import load, dump
 import os
 import shutil
 
-UPLOAD_DIR = "uploaded-files"
-DETECT_DIR = "detected-files"
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+os.chdir('yolov5')
+UPLOAD_DIR = ROOT_DIR + "/" + "uploaded-files"
+DETECT_DIR = ROOT_DIR + "/" + "detected-files"
 PRE_TRAINED = "yolov5s.pt"
 CST_TRAINED = "coco_uavs.pt"
 PRE_CLASSES = "coco128.yaml"
@@ -50,7 +52,6 @@ def cleanall():
 
     return msg
 
-
 @app.post("/detect/{model}")
 def detect(file: UploadFile, model):
     if model == "pre-trained":
@@ -59,6 +60,7 @@ def detect(file: UploadFile, model):
         runmodel = CST_TRAINED
     msg = {}
     if isSafe(file.filename):
+        # os.chdir("yolov5")
         my_ext = os.path.splitext(file.filename)
         try:
             contents = file.file.read()
@@ -73,6 +75,7 @@ def detect(file: UploadFile, model):
         if not my_ext[1] in VIDEO_EXTS:
             runArgs.append("--save-txt")
         runArgs.append('--source')
+        # print("runArgs: " + str(runArgs))
         runArgs.append(UPLOAD_DIR + "/" + file.filename)
         # result = subprocess.run(['python', 'detect.py','--weights',PRE_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
         result = subprocess.run(runArgs, stdout=subprocess.PIPE)
@@ -86,27 +89,6 @@ def detect(file: UploadFile, model):
 
     return msg
 
-# @app.post("/detect")
-# def detect(file: UploadFile):
-#     msg = {}
-#     if isSafe(file.filename):
-#         try:
-#             contents = file.file.read()
-#             with open(UPLOAD_DIR + "/" + file.filename, 'wb') as f:
-#                 f.write(contents)
-#         except Exception as err:
-#             return {"error": err}
-#         finally:
-#             file.file.close()
-        
-#         result = subprocess.run(['python', 'detect.py','--weights',CST_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
-#         output = str(result.stdout)
-#         labels = get_labels(file.filename)
-#         msg = {"message": labels}
-#     else:
-#         msg = {"message": "Cannot process that file type.\nSupported types: " + str(SAFE_2_PROCESS) + ""}
-#     return msg
-
 def countX(lst, x):
     count = 0
     for ele in lst:
@@ -117,23 +99,28 @@ def countX(lst, x):
 def get_labels(filename):
     label_file = os.path.splitext(DETECT_DIR + "/exp/labels/" + filename)[0] + ".txt"
     det_list = []
-    with open(label_file) as file:
-        lines = file.readlines()
-        lines = [line.rstrip() for line in lines]
-        for line in lines:
-            thisline = line.split()
-            det_list.append(int(thisline[0]))
-            # print(OBJECT_CLASSES[int(thisline[0])])
-            # print (thisline[0])
-    det_list.sort()
-    obj_list = []
-    for c in OBJECT_CLASSES:
-        cname = OBJECT_CLASSES[c]
-        count = countX(det_list,c)
-        if count > 0:
-            obj = {"object": cname, "count": count}
-            obj_list.append(obj)
-    return { "filename": filename, "objects": obj_list }
+    msg = {}
+    try:
+        with open(label_file) as file:
+            lines = file.readlines()
+            lines = [line.rstrip() for line in lines]
+            for line in lines:
+                thisline = line.split()
+                det_list.append(int(thisline[0]))
+                # print(OBJECT_CLASSES[int(thisline[0])])
+                # print (thisline[0])
+        det_list.sort()
+        obj_list = []
+        for c in OBJECT_CLASSES:
+            cname = OBJECT_CLASSES[c]
+            count = countX(det_list,c)
+            if count > 0:
+                obj = {"object": cname, "count": count}
+                obj_list.append(obj)
+        msg = { "filename": filename, "objects": obj_list }
+    except Exception:
+        msg = {"no objects detected"}
+    return msg
 
 def isSafe(filename):
     safe = False
