@@ -51,8 +51,12 @@ def cleanall():
     return msg
 
 
-@app.post("/pretrained")
-def detect(file: UploadFile):
+@app.post("/detect/{model}")
+def detect(file: UploadFile, model):
+    if model == "pre-trained":
+        runmodel = PRE_TRAINED
+    elif model == "custom":
+        runmodel = CST_TRAINED
     msg = {}
     if isSafe(file.filename):
         my_ext = os.path.splitext(file.filename)
@@ -64,7 +68,7 @@ def detect(file: UploadFile):
             return {"error": err}
         finally:
             file.file.close()
-        runArgs = ['python', 'detect.py','--weights',PRE_TRAINED,'--project',DETECT_DIR,'--exist-ok']
+        runArgs = ['python', 'detect.py','--weights',runmodel,'--project',DETECT_DIR,'--exist-ok']
         print(my_ext)
         if not my_ext[1] in VIDEO_EXTS:
             runArgs.append("--save-txt")
@@ -82,26 +86,26 @@ def detect(file: UploadFile):
 
     return msg
 
-@app.post("/detect")
-def detect(file: UploadFile):
-    msg = {}
-    if isSafe(file.filename):
-        try:
-            contents = file.file.read()
-            with open(UPLOAD_DIR + "/" + file.filename, 'wb') as f:
-                f.write(contents)
-        except Exception as err:
-            return {"error": err}
-        finally:
-            file.file.close()
+# @app.post("/detect")
+# def detect(file: UploadFile):
+#     msg = {}
+#     if isSafe(file.filename):
+#         try:
+#             contents = file.file.read()
+#             with open(UPLOAD_DIR + "/" + file.filename, 'wb') as f:
+#                 f.write(contents)
+#         except Exception as err:
+#             return {"error": err}
+#         finally:
+#             file.file.close()
         
-        result = subprocess.run(['python', 'detect.py','--weights',CST_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
-        output = str(result.stdout)
-        labels = get_labels(file.filename)
-        msg = {"message": labels}
-    else:
-        msg = {"message": "Cannot process that file type.\nSupported types: " + str(SAFE_2_PROCESS) + ""}
-    return msg
+#         result = subprocess.run(['python', 'detect.py','--weights',CST_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
+#         output = str(result.stdout)
+#         labels = get_labels(file.filename)
+#         msg = {"message": labels}
+#     else:
+#         msg = {"message": "Cannot process that file type.\nSupported types: " + str(SAFE_2_PROCESS) + ""}
+#     return msg
 
 def countX(lst, x):
     count = 0
