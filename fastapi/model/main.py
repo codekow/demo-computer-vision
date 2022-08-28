@@ -18,6 +18,7 @@ PRE_CLASSES = "coco128.yaml"
 CST_CLASSES = "uavs2.yaml"
 OBJECT_CLASSES = {}
 SAFE_2_PROCESS = [".jpg",".jpeg",".png",".m4v",".mov",".mp4"]
+VIDEO_EXTS = [".m4v",".mov",".mp4"]
 
 
 # Load the classes
@@ -54,6 +55,7 @@ def cleanall():
 def detect(file: UploadFile):
     msg = {}
     if isSafe(file.filename):
+        my_ext = os.path.splitext(file.filename)
         try:
             contents = file.file.read()
             with open(UPLOAD_DIR + "/" + file.filename, 'wb') as f:
@@ -62,11 +64,19 @@ def detect(file: UploadFile):
             return {"error": err}
         finally:
             file.file.close()
-        
-        result = subprocess.run(['python', 'detect.py','--weights',PRE_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
-        output = str(result.stdout)
-        labels = get_labels(file.filename)
-        msg = {"message": labels}
+        runArgs = ['python', 'detect.py','--weights',PRE_TRAINED,'--project',DETECT_DIR,'--exist-ok']
+        print(my_ext)
+        if not my_ext[1] in VIDEO_EXTS:
+            runArgs.append("--save-txt")
+        runArgs.append('--source')
+        runArgs.append(UPLOAD_DIR + "/" + file.filename)
+        # result = subprocess.run(['python', 'detect.py','--weights',PRE_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
+        result = subprocess.run(runArgs, stdout=subprocess.PIPE)
+        if not my_ext[1] in VIDEO_EXTS:
+            labels = get_labels(file.filename)
+            msg = {"message": labels}
+        else:
+            msg = {"message": "Video processed successfully"}
     else:
         msg = {"message": "Cannot process that file type.\nSupported types: " + str(SAFE_2_PROCESS) + ""}
 
