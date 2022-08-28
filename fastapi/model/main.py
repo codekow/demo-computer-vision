@@ -2,11 +2,13 @@
 # uvicorn app:app --reload --host localhost --host 0.0.0.0 --port 9000
 
 import subprocess
+from telnetlib import DET
 import yaml
 from fastapi import FastAPI, Path, UploadFile
 from typing import Optional
 from yaml import load, dump
 import os
+import shutil
 
 UPLOAD_DIR = "uploaded-files"
 DETECT_DIR = "detected-files"
@@ -15,6 +17,8 @@ CST_TRAINED = "coco_uavs.pt"
 PRE_CLASSES = "coco128.yaml"
 CST_CLASSES = "uavs2.yaml"
 OBJECT_CLASSES = {}
+SAFE_2_PROCESS = [".jpg",".jpeg",".png",".m4v",".mov",".mp4"]
+
 
 # Load the classes
 with open("data/" + CST_CLASSES, 'r') as stream:
@@ -30,39 +34,64 @@ app = FastAPI()
 def index():
     return {"status": "Everything`s Groovy"}
 
+@app.get("/cleanall")
+def cleanall():
+    msg = {}
+    uploadlist = os.listdir(UPLOAD_DIR)
+    detectionlist = os.listdir(DETECT_DIR)
+    try:
+        for f in uploadlist:
+            os.remove(UPLOAD_DIR + "/" + f)
+        shutil.rmtree(DETECT_DIR + "/exp")
+        msg = {"message": "All directories cleaned."}
+    except Exception as err:
+        msg = {"message": "An error has occurred: " + str(err)}
+
+    return msg
+
+
 @app.post("/pretrained")
 def detect(file: UploadFile):
-    try:
-        contents = file.file.read()
-        with open(UPLOAD_DIR + "/" + file.filename, 'wb') as f:
-            f.write(contents)
-    except Exception as err:
-        return {"error": err}
-    finally:
-        file.file.close()
-    
-    result = subprocess.run(['python', 'detect.py','--weights',PRE_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
-    output = str(result.stdout)
-    labels = get_labels(file.filename)
+    msg = {}
+    if isSafe(file.filename):
+        try:
+            contents = file.file.read()
+            with open(UPLOAD_DIR + "/" + file.filename, 'wb') as f:
+                f.write(contents)
+        except Exception as err:
+            return {"error": err}
+        finally:
+            file.file.close()
+        
+        result = subprocess.run(['python', 'detect.py','--weights',PRE_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
+        output = str(result.stdout)
+        labels = get_labels(file.filename)
+        msg = {"message": labels}
+    else:
+        msg = {"message": "Cannot process that file type.\nSupported types: " + str(SAFE_2_PROCESS) + ""}
 
-    return {"message": f"Successfully uploaded {file.filename}", "labels": labels}
+    return msg
 
 @app.post("/detect")
 def detect(file: UploadFile):
-    try:
-        contents = file.file.read()
-        with open(UPLOAD_DIR + "/" + file.filename, 'wb') as f:
-            f.write(contents)
-    except Exception as err:
-        return {"error": err}
-    finally:
-        file.file.close()
-    
-    result = subprocess.run(['python', 'detect.py','--weights',CST_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
-    output = str(result.stdout)
-    labels = get_labels(file.filename)
-
-    return {"message": f"Successfully uploaded {file.filename}", "labels": labels}
+    msg = {}
+    if isSafe(file.filename):
+        try:
+            contents = file.file.read()
+            with open(UPLOAD_DIR + "/" + file.filename, 'wb') as f:
+                f.write(contents)
+        except Exception as err:
+            return {"error": err}
+        finally:
+            file.file.close()
+        
+        result = subprocess.run(['python', 'detect.py','--weights',CST_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
+        output = str(result.stdout)
+        labels = get_labels(file.filename)
+        msg = {"message": labels}
+    else:
+        msg = {"message": "Cannot process that file type.\nSupported types: " + str(SAFE_2_PROCESS) + ""}
+    return msg
 
 def countX(lst, x):
     count = 0
@@ -90,5 +119,11 @@ def get_labels(filename):
         if count > 0:
             obj = {"object": cname, "count": count}
             obj_list.append(obj)
-    print(obj_list)
     return { "filename": filename, "objects": obj_list }
+
+def isSafe(filename):
+    safe = False
+    myext = os.path.splitext(filename)
+    if myext[1] in SAFE_2_PROCESS:
+        safe = True
+    return safe
