@@ -64,11 +64,31 @@ def detect(file: UploadFile):
 
     return {"message": f"Successfully uploaded {file.filename}", "labels": labels}
 
+def countX(lst, x):
+    count = 0
+    for ele in lst:
+        if (ele == x):
+            count = count + 1
+    return count
+
 def get_labels(filename):
     label_file = os.path.splitext(DETECT_DIR + "/exp/labels/" + filename)[0] + ".txt"
-    print(OBJECT_CLASSES[0])
+    det_list = []
     with open(label_file) as file:
         lines = file.readlines()
         lines = [line.rstrip() for line in lines]
-        print(lines)
-    return { "filename": filename, "object": "someobject", "count": 0 }
+        for line in lines:
+            thisline = line.split()
+            det_list.append(int(thisline[0]))
+            # print(OBJECT_CLASSES[int(thisline[0])])
+            # print (thisline[0])
+    det_list.sort()
+    obj_list = []
+    for c in OBJECT_CLASSES:
+        cname = OBJECT_CLASSES[c]
+        count = countX(det_list,c)
+        if count > 0:
+            obj = {"object": cname, "count": count}
+            obj_list.append(obj)
+    print(obj_list)
+    return { "filename": filename, "objects": obj_list }
