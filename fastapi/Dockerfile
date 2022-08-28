@@ -4,6 +4,8 @@ RUN yum install -y libGL
 RUN git clone --branch v6.2 https://github.com/ultralytics/yolov5.git
 RUN mkdir uploaded-files
 RUN mkdir detected-files
+RUN chown -R 1000:1000 uploaded-files
+RUN chown -R 1000:1000 detected-files
 RUN wget -O yolov5/data/uavs2.yaml http://nexus.davenet.local:8081/repository/simplevis/model/uavs2.yaml
 RUN wget -O yolov5/coco_uavs.pt http://nexus.davenet.local:8081/repository/simplevis/model/coco_uavs.pt
 RUN wget -O yolov5/yolov5s.pt http://nexus.davenet.local:8081/repository/simplevis/model/yolov5s.pt
@@ -13,7 +15,7 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 WORKDIR yolov5 
 RUN pip install -r requirements.txt 
-# USER root
-# RUN yum install -y libGL
-# RUN pip install psutil IPython
+#USER 1000
 EXPOSE 8000
+WORKDIR /opt/app-root/src
+ENTRYPOINT ["/opt/app-root/bin/uvicorn","main:app","--host","0.0.0.0"]
