@@ -5,6 +5,7 @@ import subprocess
 from telnetlib import DET
 import yaml
 from fastapi import FastAPI, Path, UploadFile
+from fastapi.responses import FileResponse
 from typing import Optional
 from yaml import load, dump
 import os
@@ -36,6 +37,15 @@ app = FastAPI()
 @app.get("/")
 def index():
     return {"status": "Everything`s Groovy"}
+
+@app.get("/uploads/get")
+def getUploadList():
+    uploadlist = os.listdir(UPLOAD_DIR)
+    return { str(uploadlist) }
+
+@app.get("/uploads/get/{fname}")
+async def main(fname):
+    return FileResponse(DETECT_DIR + "/exp/" + fname)
 
 @app.get("/cleanall")
 def cleanall():
@@ -85,7 +95,7 @@ def detect(file: UploadFile, model):
             msg = {"filename": file.filename, "contentType": file.content_type, "detectedObj": labels, "save_path": UPLOAD_DIR + "/" + file.filename, "data": {}}
             # filename=file.filename,contentType=file.content_type,detectedObj=[],save_path=save_path,data=json_compaitable_data
         else:
-            msg = {"message": "Video processed successfully"}
+            msg = {"filename": file.filename, "contentType": file.content_type, "save_path": UPLOAD_DIR + "/" + file.filename, "data": {}}
     else:
         msg = {"message": "Cannot process that file type.\nSupported types: " + str(SAFE_2_PROCESS) + ""}
 
