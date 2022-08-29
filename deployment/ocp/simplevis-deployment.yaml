@@ -30,32 +30,18 @@ spec:
     spec:
       containers:
         - name: simplevis-full
-          image: quay.io/dawhite20910/simplevis:1.2.4.3
+          image: nexus.davenet.local:8080/simplevis/fastapi
           imagePullPolicy: Always
           ports:
-            - containerPort: 5001
+            - containerPort: 8000
               protocol: TCP
           volumeMounts:
-            - mountPath: /opt/app-root/src/flask/static/workdir
+            - mountPath: /opt/app-root/src/uploaded-files
               name: simplevis-data
-            - mountPath: /opt/app-root/src/yolov5/runs
+            - mountPath: /opt/app-root/src/detected-files
               name: experiment-runs
           resources: {}
           env:
-            - name: FLASK_APP
-              value: flask/main.py
-            - name: FLASK_ENV
-              value: development
-            - name: FLASK_DEBUG
-              value: "1"
-            - name: CAPTURE_PATH
-              value: /opt/app-root/src/flask/static/workdir
-            - name: YOLODIR
-              value: /opt/app-root/src/yolov5
-            - name: UPLOAD_FOLDER
-              value: /opt/app-root/src/flask/static/workdir/incoming
-            - name: MODEL_SERVER
-              value: "http://localhost:5001"
             - name: ENVIRONMENT_NAME
               value: "OpenShift"
           imagePullPolicy: Always
@@ -82,10 +68,10 @@ spec:
     app: simplevis
   ports:
     - protocol: TCP
-      port: 5001
+      port: 8000
   readinessProbe:
     tcpSocket:
-      port: 5001
+      port: 8000
     initialDelaySeconds: 5
     periodSeconds: 10
 
@@ -101,5 +87,5 @@ spec:
     name: simplevis-service
     weight: 100
   port:
-    targetPort: 5001
+    targetPort: 8000
   wildcardPolicy: None
