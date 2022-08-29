@@ -81,7 +81,9 @@ def detect(file: UploadFile, model):
         result = subprocess.run(runArgs, stdout=subprocess.PIPE)
         if not my_ext[1] in VIDEO_EXTS:
             labels = get_labels(file.filename)
-            msg = {"message": labels}
+            # msg = {"message": labels}
+            msg = {"filename": file.filename, "contentType": file.content_type, "detectedObj": labels, "save_path": UPLOAD_DIR + "/" + file.filename, "data": {}}
+            # filename=file.filename,contentType=file.content_type,detectedObj=[],save_path=save_path,data=json_compaitable_data
         else:
             msg = {"message": "Video processed successfully"}
     else:
@@ -99,7 +101,7 @@ def countX(lst, x):
 def get_labels(filename):
     label_file = os.path.splitext(DETECT_DIR + "/exp/labels/" + filename)[0] + ".txt"
     det_list = []
-    msg = {}
+    obs = []
     try:
         with open(label_file) as file:
             lines = file.readlines()
@@ -117,10 +119,10 @@ def get_labels(filename):
             if count > 0:
                 obj = {"object": cname, "count": count}
                 obj_list.append(obj)
-        msg = { "filename": filename, "objects": obj_list }
+        obs = obj_list
     except Exception:
-        msg = {"no objects detected"}
-    return msg
+        obs = ["no objects detected"]
+    return obs
 
 def isSafe(filename):
     safe = False
