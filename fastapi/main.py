@@ -42,7 +42,7 @@ def index():
 @app.get("/uploads/get")
 def getUploadList():
     uploadlist = os.listdir(UPLOAD_DIR)
-    return { str(uploadlist) }
+    return { "images": uploadlist }
 
 @app.get("/uploads/get/image/{fname}")
 async def main(fname):
@@ -51,7 +51,7 @@ async def main(fname):
 @app.get("/uploads/get/labels/{fname}")
 def getLabels(fname):
     labels = str(get_labels(fname))
-    return {labels}
+    return {"labels": labels}
 
 @app.get("/cleanall")
 def cleanall():
