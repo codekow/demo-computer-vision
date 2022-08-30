@@ -50,7 +50,7 @@ async def main(fname):
 
 @app.get("/uploads/get/labels/{fname}")
 def getLabels(fname):
-    labels = str(get_labels(fname))
+    labels = get_labels(fname)
     return {"labels": labels}
 
 @app.get("/cleanall")
