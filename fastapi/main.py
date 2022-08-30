@@ -10,6 +10,7 @@ from typing import Optional
 from yaml import load, dump
 import os
 import shutil
+import json
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 os.chdir('yolov5')
@@ -43,9 +44,14 @@ def getUploadList():
     uploadlist = os.listdir(UPLOAD_DIR)
     return { str(uploadlist) }
 
-@app.get("/uploads/get/{fname}")
+@app.get("/uploads/get/image/{fname}")
 async def main(fname):
     return FileResponse(DETECT_DIR + "/exp/" + fname)
+
+@app.get("/uploads/get/labels/{fname}")
+def getLabels(fname):
+    labels = str(get_labels(fname))
+    return {labels}
 
 @app.get("/cleanall")
 def cleanall():
