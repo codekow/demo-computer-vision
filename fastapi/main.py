@@ -86,14 +86,14 @@ def detect(file: UploadFile, model):
             return {"error": err}
         finally:
             file.file.close()
-        runArgs = ['python', 'detect.py','--weights',runmodel,'--project',DETECT_DIR,'--exist-ok']
+        runArgs = ['python3', 'detect.py','--weights',runmodel,'--project',DETECT_DIR,'--exist-ok']
         print(my_ext)
         if not my_ext[1] in VIDEO_EXTS:
             runArgs.append("--save-txt")
         runArgs.append('--source')
         # print("runArgs: " + str(runArgs))
         runArgs.append(UPLOAD_DIR + "/" + file.filename)
-        # result = subprocess.run(['python', 'detect.py','--weights',PRE_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
+        # result = subprocess.run(['python3', 'detect.py','--weights',PRE_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
         result = subprocess.run(runArgs, stdout=subprocess.PIPE)
         if not my_ext[1] in VIDEO_EXTS:
             labels = get_labels(file.filename)
@@ -101,6 +101,12 @@ def detect(file: UploadFile, model):
             msg = {"filename": file.filename, "contentType": file.content_type, "detectedObj": labels, "save_path": UPLOAD_DIR + "/" + file.filename, "data": {}}
             # filename=file.filename,contentType=file.content_type,detectedObj=[],save_path=save_path,data=json_compaitable_data
         else:
+            try:
+                result = subprocess.run(['mv',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
+                result = subprocess.run(['ffmpeg','-i',DETECT_DIR + '/exp/temp.mp4','-c:v','libx264','-preset','slow','-crf','20','-c:a','aac','-b:a','160k','-vf','format=yuv420p','-movflags','+faststart',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4'],stdout=subprocess.PIPE)
+                result = subprocess.run(['rm',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
+            except Exception as err:
+                print(err)                
             msg = {"filename": file.filename, "contentType": file.content_type, "save_path": UPLOAD_DIR + "/" + file.filename, "data": {}}
     else:
         msg = {"message": "Cannot process that file type.\nSupported types: " + str(SAFE_2_PROCESS) + ""}
