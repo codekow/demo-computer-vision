@@ -11,17 +11,3 @@ spec:
     requests:
       storage: 8Gi
   storageClassName: thin
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: pvc-experiment-runs
-spec:
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  resources:
-    requests:
-      storage: 8Gi
-  storageClassName: thin

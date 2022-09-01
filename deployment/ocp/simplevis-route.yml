@@ -1,0 +1,14 @@
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: simplevis-web
+spec:
+  host: simplevis-model.davenet.local
+  to:
+    kind: Service
+    name: simplevis-service
+    weight: 100
+  port:
+    targetPort: 8000
+  wildcardPolicy: None
