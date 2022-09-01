@@ -22,7 +22,7 @@ CST_TRAINED = "coco_uavs.pt"
 PRE_CLASSES = "coco128.yaml"
 CST_CLASSES = "uavs2.yaml"
 OBJECT_CLASSES = {}
-SAFE_2_PROCESS = [".jpg",".jpeg",".png",".m4v",".mov",".mp4"]
+SAFE_2_PROCESS = [".JPG",".JPEG",".PNG",".M4V",".MOV",".MP4"]
 VIDEO_EXTS = [".m4v",".mov",".mp4"]
 
 
@@ -108,9 +108,9 @@ def detect(file: UploadFile, model):
         else:
             try:
                 print("something")
-                # result = subprocess.run(['mv',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
-                # result = subprocess.run(['ffmpeg','-i',DETECT_DIR + '/exp/temp.mp4','-c:v','libx264','-preset','slow','-crf','20','-c:a','aac','-b:a','160k','-vf','format=yuv420p','-movflags','+faststart',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4'],stdout=subprocess.PIPE)
-                # result = subprocess.run(['rm',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
+                result = subprocess.run(['mv',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
+                result = subprocess.run(['ffmpeg','-i',DETECT_DIR + '/exp/temp.mp4','-c:v','libx264','-preset','slow','-crf','20','-c:a','aac','-b:a','160k','-vf','format=yuv420p','-movflags','+faststart',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4'],stdout=subprocess.PIPE)
+                result = subprocess.run(['rm',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
             except Exception as err:
                 print(err)                
             msg = {"filename": file.filename, "contentType": file.content_type, "save_path": UPLOAD_DIR + "/" + file.filename, "data": {}}
@@ -155,6 +155,6 @@ def get_labels(filename):
 def isSafe(filename):
     safe = False
     myext = os.path.splitext(filename)
-    if myext[1] in SAFE_2_PROCESS:
+    if myext[1].upper() in SAFE_2_PROCESS:
         safe = True
     return safe
