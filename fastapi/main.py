@@ -1,4 +1,4 @@
-# uvicorn main:app --reload 
+# uvicorn main:app --reload
 # uvicorn app:app --reload --host localhost --host 0.0.0.0 --port 9000
 
 import subprocess
@@ -11,17 +11,26 @@ from yaml import load, dump
 import os
 import shutil
 import json
+ROOT_DIR = os.environ['SIMPLEVIS_DATA']
+# ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 os.chdir('yolov5')
 UPLOAD_DIR = ROOT_DIR + "/" + "uploaded-files"
 DETECT_DIR = ROOT_DIR + "/" + "detected-files"
+# checking if the directory
+# exist or not.
+if not os.path.exists(UPLOAD_DIR):
+	os.makedirs(UPLOAD_DIR)
+if not os.path.exists(DETECT_DIR):
+	os.makedirs(DETECT_DIR)
+
+
 PRE_TRAINED = "yolov5s.pt"
 CST_TRAINED = "coco_uavs.pt"
 PRE_CLASSES = "coco128.yaml"
 CST_CLASSES = "uavs2.yaml"
 OBJECT_CLASSES = {}
-SAFE_2_PROCESS = [".jpg",".jpeg",".png",".m4v",".mov",".mp4"]
+SAFE_2_PROCESS = [".JPG",".JPEG",".PNG",".M4V",".MOV",".MP4"]
 VIDEO_EXTS = [".m4v",".mov",".mp4"]
 
 
@@ -31,7 +40,7 @@ with open("data/" + CST_CLASSES, 'r') as stream:
         parsed_yaml=yaml.safe_load(stream)
         OBJECT_CLASSES = parsed_yaml['names']
     except yaml.YAMLError as exc:
-        print(exc)    
+        print(exc)
 
 app = FastAPI()
 
@@ -57,11 +66,15 @@ def getLabels(fname):
 def cleanall():
     msg = {}
     uploadlist = os.listdir(UPLOAD_DIR)
-    detectionlist = os.listdir(DETECT_DIR)
     try:
         for f in uploadlist:
             os.remove(UPLOAD_DIR + "/" + f)
-        shutil.rmtree(DETECT_DIR + "/exp")
+
+        if os.path.exists(DETECT_DIR + "/exp/labels"):
+            shutil.rmtree(DETECT_DIR + "/exp/labels")
+        detectionlist = os.listdir(DETECT_DIR + "/exp")
+        for d in detectionlist:
+            os.remove(DETECT_DIR + "/exp/" + d)
         msg = {"message": "All directories cleaned."}
     except Exception as err:
         msg = {"message": "An error has occurred: " + str(err)}
@@ -86,14 +99,14 @@ def detect(file: UploadFile, model):
             return {"error": err}
         finally:
             file.file.close()
-        runArgs = ['python', 'detect.py','--weights',runmodel,'--project',DETECT_DIR,'--exist-ok']
+        runArgs = ['python3', 'detect.py','--weights',runmodel,'--project',DETECT_DIR,'--exist-ok']
         print(my_ext)
         if not my_ext[1] in VIDEO_EXTS:
             runArgs.append("--save-txt")
         runArgs.append('--source')
         # print("runArgs: " + str(runArgs))
         runArgs.append(UPLOAD_DIR + "/" + file.filename)
-        # result = subprocess.run(['python', 'detect.py','--weights',PRE_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
+        # result = subprocess.run(['python3', 'detect.py','--weights',PRE_TRAINED,'--save-txt','--project',DETECT_DIR,'--exist-ok','--source',UPLOAD_DIR + "/" + file.filename], stdout=subprocess.PIPE)
         result = subprocess.run(runArgs, stdout=subprocess.PIPE)
         if not my_ext[1] in VIDEO_EXTS:
             labels = get_labels(file.filename)
@@ -102,11 +115,12 @@ def detect(file: UploadFile, model):
             # filename=file.filename,contentType=file.content_type,detectedObj=[],save_path=save_path,data=json_compaitable_data
         else:
             try:
+                print("something")
                 result = subprocess.run(['mv',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
                 result = subprocess.run(['ffmpeg','-i',DETECT_DIR + '/exp/temp.mp4','-c:v','libx264','-preset','slow','-crf','20','-c:a','aac','-b:a','160k','-vf','format=yuv420p','-movflags','+faststart',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4'],stdout=subprocess.PIPE)
                 result = subprocess.run(['rm',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
             except Exception as err:
-                print(err)                
+                print(err)
             msg = {"filename": file.filename, "contentType": file.content_type, "save_path": UPLOAD_DIR + "/" + file.filename, "data": {}}
     else:
         msg = {"message": "Cannot process that file type.\nSupported types: " + str(SAFE_2_PROCESS) + ""}
@@ -149,6 +163,6 @@ def get_labels(filename):
 def isSafe(filename):
     safe = False
     myext = os.path.splitext(filename)
-    if myext[1] in SAFE_2_PROCESS:
+    if myext[1].upper() in SAFE_2_PROCESS:
         safe = True
     return safe
