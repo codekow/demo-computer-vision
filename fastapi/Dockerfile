@@ -13,7 +13,7 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 WORKDIR yolov5 
 RUN pip install -r requirements.txt 
-#USER 1000
+ENV SIMPLEVIS_DATA=/Users/davidwhite/workspace/simplevis-data
 EXPOSE 8000
 WORKDIR /opt/app-root/src
 ENTRYPOINT ["/opt/app-root/bin/uvicorn","main:app","--host","0.0.0.0"]

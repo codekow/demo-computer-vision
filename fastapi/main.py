@@ -11,8 +11,9 @@ from yaml import load, dump
 import os
 import shutil
 import json
+ROOT_DIR = os.environ['SIMPLEVIS_DATA']
+# ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 os.chdir('yolov5')
 UPLOAD_DIR = ROOT_DIR + "/" + "uploaded-files"
 DETECT_DIR = ROOT_DIR + "/" + "detected-files"
@@ -57,11 +58,15 @@ def getLabels(fname):
 def cleanall():
     msg = {}
     uploadlist = os.listdir(UPLOAD_DIR)
-    detectionlist = os.listdir(DETECT_DIR)
     try:
         for f in uploadlist:
             os.remove(UPLOAD_DIR + "/" + f)
-        shutil.rmtree(DETECT_DIR + "/exp")
+
+        if os.path.exists(DETECT_DIR + "/exp/labels"):
+            shutil.rmtree(DETECT_DIR + "/exp/labels")
+        detectionlist = os.listdir(DETECT_DIR + "/exp")
+        for d in detectionlist:
+            os.remove(DETECT_DIR + "/exp/" + d)
         msg = {"message": "All directories cleaned."}
     except Exception as err:
         msg = {"message": "An error has occurred: " + str(err)}
@@ -102,9 +107,10 @@ def detect(file: UploadFile, model):
             # filename=file.filename,contentType=file.content_type,detectedObj=[],save_path=save_path,data=json_compaitable_data
         else:
             try:
-                result = subprocess.run(['mv',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
-                result = subprocess.run(['ffmpeg','-i',DETECT_DIR + '/exp/temp.mp4','-c:v','libx264','-preset','slow','-crf','20','-c:a','aac','-b:a','160k','-vf','format=yuv420p','-movflags','+faststart',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4'],stdout=subprocess.PIPE)
-                result = subprocess.run(['rm',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
+                print("something")
+                # result = subprocess.run(['mv',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
+                # result = subprocess.run(['ffmpeg','-i',DETECT_DIR + '/exp/temp.mp4','-c:v','libx264','-preset','slow','-crf','20','-c:a','aac','-b:a','160k','-vf','format=yuv420p','-movflags','+faststart',DETECT_DIR + '/exp/' + my_ext[0] + '.mp4'],stdout=subprocess.PIPE)
+                # result = subprocess.run(['rm',DETECT_DIR + '/exp/temp.mp4'],stdout=subprocess.PIPE)
             except Exception as err:
                 print(err)                
             msg = {"filename": file.filename, "contentType": file.content_type, "save_path": UPLOAD_DIR + "/" + file.filename, "data": {}}
