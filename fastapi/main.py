@@ -17,6 +17,14 @@ ROOT_DIR = os.environ['SIMPLEVIS_DATA']
 os.chdir('yolov5')
 UPLOAD_DIR = ROOT_DIR + "/" + "uploaded-files"
 DETECT_DIR = ROOT_DIR + "/" + "detected-files"
+# checking if the directory
+# exist or not.
+if not os.path.exists(UPLOAD_DIR):
+	os.makedirs(UPLOAD_DIR)
+if not os.path.exists(DETECT_DIR):
+	os.makedirs(DETECT_DIR)
+
+
 PRE_TRAINED = "yolov5s.pt"
 CST_TRAINED = "coco_uavs.pt"
 PRE_CLASSES = "coco128.yaml"
