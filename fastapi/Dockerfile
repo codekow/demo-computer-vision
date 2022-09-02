@@ -1,6 +1,8 @@
-FROM ubi9:latest
+FROM quay.io/centos/centos:stream9
 
 WORKDIR /opt/app-root/src
+ARG YOLOv5_VERSION=6.2
+ARG WEIGHTS=yolov5s
 
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm \
                    https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-9.noarch.rpm \
@@ -8,21 +10,27 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.n
  && dnf -y install ffmpeg libGL git wget python3-pip \
  && dnf clean all
 
-RUN git clone --branch v6.2 https://github.com/ultralytics/yolov5.git \
- && wget -O yolov5/data/uavs2.yaml https://s3.jharmison.com/simplevis/public/uavs2.yaml \
- && wget -O yolov5/coco_uavs.pt https://s3.jharmison.com/simplevis/public/coco_uavs.pt \
- && wget -O yolov5/yolov5s.pt https://s3.jharmison.com/simplevis/public/yolov5s.pt
+RUN mkdir -p /usr/local/lib/python3.9/site-packages \
+ && cd /usr/local/lib/python3.9/site-packages \
+ && git clone --branch v${YOLOv5_VERSION} --depth 1 https://github.com/ultralytics/yolov5.git \
+ && pip install --no-cache-dir \
+    -r /usr/local/lib/python3.9/site-packages/yolov5/requirements.txt
 
-COPY app/ ./
+RUN cd /usr/local/lib/python3.9/site-packages/yolov5 \
+ && wget -O data/uavs2.yaml https://s3.jharmison.com/simplevis/public/uavs2.yaml \
+ && wget -O weights.pt https://s3.jharmison.com/simplevis/public/${WEIGHTS}.pt
 
-RUN pip install -r requirements.txt \
- && pip install -r yolov5/requirements.txt \
+COPY requirements.txt ./
+
+RUN pip install --no-cache-dir -r requirements.txt \
  && mkdir -p uploaded-files detected-files \
  && chown 1001:1001 uploaded-files detected-files
 
+COPY app/ ./
+
 USER 1001
-ENV SIMPLEVIS_DATA=/opt/app-root/src/simplevis-data \
-    YOLO_DIR=/opt/app-root/src/yolov5
+ENV SIMPLEVIS_DATA=/opt/app-root/src/simplevis-data
+
 EXPOSE 8000
 ENTRYPOINT ["/usr/local/bin/uvicorn"]
 CMD ["main:app", "--host", "0.0.0.0"]

@@ -5,6 +5,7 @@ import subprocess
 import yaml
 from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import FileResponse
+from yolov5.detect import run as yolov5_detect
 import os
 import shutil
 from pathlib import Path
@@ -17,32 +18,30 @@ ROOT_DIR = Path(
 )
 YOLO_DIR = Path(
     os.environ.get(
-        'YOLO_DIR',
-        Path().resolve().joinpath('yolov5')
+        'YOLOv5_DIR',
+        Path('/usr/local/lib/python3.9/site-packages/yolov5')
     )
 )
 
+WEIGHTS_FILE = YOLO_DIR.joinpath('weights.pt')
 UPLOAD_DIR = ROOT_DIR.joinpath("uploaded-files")
 DETECT_DIR = ROOT_DIR.joinpath("detected-files")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(DETECT_DIR, exist_ok=True)
 
-PRE_TRAINED = "yolov5s.pt"
-CST_TRAINED = "coco_uavs.pt"
-PRE_CLASSES = "coco128.yaml"
-CST_CLASSES = "uavs2.yaml"
-OBJECT_CLASSES = {}
 SAFE_2_PROCESS = [".JPG", ".JPEG", ".PNG", ".M4V", ".MOV", ".MP4"]
-VIDEO_EXTS = [".m4v", ".mov", ".mp4"]
+VIDEO_EXTS = [".M4V", ".MOV", ".MP4"]
 
 
 # Load the classes
-with open(YOLO_DIR.joinpath("data").joinpath(CST_CLASSES), 'r') as stream:
+with open(YOLO_DIR.joinpath('data').joinpath('uavs2.yaml'), 'r') as f:
     try:
-        parsed_yaml = yaml.safe_load(stream)
+        parsed_yaml = yaml.safe_load(f)
         OBJECT_CLASSES = parsed_yaml['names']
     except yaml.YAMLError as exc:
-        print(exc)
+        raise RuntimeError(f"Unable to load classes from yaml: {str(exc)}")
+    except Exception as exc:
+        raise RuntimeError(f"Unable to identify class names: {str(exc)}")
 
 app = FastAPI()
 
@@ -84,95 +83,89 @@ def cleanall():
         )
 
 
-@app.post("/detect/{model}")
-def detect(file: UploadFile, model):
-    if model == "pre-trained":
-        runmodel = PRE_TRAINED
-    elif model == "custom":
-        runmodel = CST_TRAINED
-    if isSafe(file.filename):
-        # os.chdir("yolov5")
-        my_ext = os.path.splitext(file.filename)
-        try:
-            contents = file.file.read()
-            with open(UPLOAD_DIR + "/" + file.filename, 'wb') as f:
-                f.write(contents)
-        except Exception as err:
-            return {"error": err}
-        finally:
-            file.file.close()
-        runArgs = [
-            'python3',
-            'detect.py',
-            '--weights',
-            runmodel,
-            '--project',
-            DETECT_DIR,
-            '--exist-ok'
-        ]
-        print(my_ext)
-        if not my_ext[1] in VIDEO_EXTS:
-            runArgs.append("--save-txt")
-        runArgs.append('--source')
-        # print("runArgs: " + str(runArgs))
-        runArgs.append(UPLOAD_DIR + "/" + file.filename)
-        _ = subprocess.run(runArgs, stdout=subprocess.PIPE)
-        if not my_ext[1] in VIDEO_EXTS:
-            labels = get_labels(file.filename)
-            # msg = {"message": labels}
-            return {
-                "filename": file.filename,
-                "contentType": file.content_type,
-                "detectedObj": labels,
-                "save_path": UPLOAD_DIR + "/" + file.filename,
-                "data": {}
-            }
-        else:
-            try:
-                print("something")
-                _ = subprocess.run([
-                    'mv',
-                    DETECT_DIR + '/exp/' + my_ext[0] + '.mp4',
-                    DETECT_DIR + '/exp/temp.mp4'
-                ], stdout=subprocess.PIPE)
-                _ = subprocess.run([
-                    'ffmpeg',
-                    '-i',
-                    DETECT_DIR + '/exp/temp.mp4',
-                    '-c:v',
-                    'libx264',
-                    '-preset',
-                    'slow',
-                    '-crf',
-                    '20',
-                    '-c:a',
-                    'aac',
-                    '-b:a',
-                    '160k',
-                    '-vf',
-                    'format=yuv420p',
-                    '-movflags',
-                    '+faststart',
-                    DETECT_DIR + '/exp/' + my_ext[0] + '.mp4'
-                ], stdout=subprocess.PIPE)
-                _ = subprocess.run(
-                    ['rm', DETECT_DIR + '/exp/temp.mp4'],
-                    stdout=subprocess.PIPE
-                )
-            except Exception as err:
-                print(err)
-            return {
-                "filename": file.filename,
-                "contentType": file.content_type,
-                "save_path": UPLOAD_DIR + "/" + file.filename,
-                "data": {}
-            }
-    return {
-        "message": (
-            "Cannot process that file type.\n"
-            "Supported types: " + str(SAFE_2_PROCESS)
+@app.post("/detect")
+def detect(file: UploadFile):
+    if not isSafe(file.filename):
+        raise HTTPException(
+            status_code=415,
+            detail=(
+                f"Cannot process that file type. "
+                f"Supported types: {SAFE_2_PROCESS}"
+            )
         )
+
+    my_ext = Path(file.filename).suffix.upper()
+    try:
+        contents = file.file.read()
+        with open(UPLOAD_DIR.joinpath(file.filename), 'wb') as f:
+            f.write(contents)
+    except Exception as err:
+        raise HTTPException(
+            status_code=500,
+            detail=str(err)
+        )
+    finally:
+        file.file.close()
+
+    detect_args = {
+        'weights': WEIGHTS_FILE,
+        'source': UPLOAD_DIR.joinpath(file.filename),
+        'project': DETECT_DIR,
+        'exist_ok': True,
     }
+    if my_ext not in VIDEO_EXTS:
+        detect_args['save_txt'] = True
+
+    # Actually run the inference
+    yolov5_detect(**detect_args)
+
+    if my_ext not in VIDEO_EXTS:
+        labels = get_labels(file.filename)
+        return {
+            "filename": file.filename,
+            "contentType": file.content_type,
+            "detectedObj": labels,
+            "save_path": UPLOAD_DIR.joinpath(file.filename),
+            "data": {}
+        }
+    else:
+        try:
+            # ffmpeg to transcode the video file
+            video_file = DETECT_DIR.joinpath('exp').joinpath(file.filename)
+            temp_video_file = video_file.with_stem('temp')
+            video_file.rename(temp_video_file)
+            _ = subprocess.run([
+                'ffmpeg',
+                '-i',
+                str(temp_video_file),
+                '-c:v',
+                'libx264',
+                '-preset',
+                'slow',
+                '-crf',
+                '20',
+                '-c:a',
+                'aac',
+                '-b:a',
+                '160k',
+                '-vf',
+                'format=yuv420p',
+                '-movflags',
+                '+faststart',
+                str(video_file)
+            ], stdout=subprocess.PIPE)
+            os.remove(temp_video_file)
+        except Exception as err:
+            raise HTTPException(
+                status_code=500,
+                detail=str(err)
+            )
+        return {
+            "filename": file.filename,
+            "contentType": file.content_type,
+            "save_path": UPLOAD_DIR.joinpath(file.filename),
+            "data": {}
+        }
 
 
 def countX(lst, x):
@@ -184,7 +177,8 @@ def countX(lst, x):
 
 
 def get_labels(filename):
-    label_file = os.path.splitext(DETECT_DIR + "/exp/labels/" + filename)[0] + ".txt"  # noqa: E501
+    label_dir = DETECT_DIR.joinpath("exp").joinpath("labels")
+    label_file = label_dir.joinpath(filename).with_suffix(".txt")
     det_list = []
     obs = []
     try:
@@ -194,8 +188,6 @@ def get_labels(filename):
             for line in lines:
                 thisline = line.split()
                 det_list.append(int(thisline[0]))
-                # print(OBJECT_CLASSES[int(thisline[0])])
-                # print (thisline[0])
         det_list.sort()
         obj_list = []
         for c in OBJECT_CLASSES:
@@ -212,8 +204,4 @@ def get_labels(filename):
 
 
 def isSafe(filename):
-    safe = False
-    myext = os.path.splitext(filename)
-    if myext[1].upper() in SAFE_2_PROCESS:
-        safe = True
-    return safe
+    return Path(filename).suffix.upper() in SAFE_2_PROCESS
