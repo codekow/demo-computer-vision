@@ -53,12 +53,24 @@ def index():
 
 @app.get("/uploads/get")
 def getUploadList():
-    return {"images": [f.stem for f in UPLOAD_DIR.iterdir()]}
+    return {"images": [f.parts[-1] for f in UPLOAD_DIR.iterdir()]}
 
 
 @app.get("/uploads/get/image/{fname}")
 async def main(fname):
-    return FileResponse(DETECT_DIR.joinpath("exp").joinpath(fname))
+    try:
+        return FileResponse(DETECT_DIR.joinpath("exp").joinpath(fname))
+    except RuntimeError as exc:
+        if "does not exist" in str(exc):
+            raise HTTPException(
+                status_code=404,
+                detail=f"No file named {fname} found"
+            )
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Problem encountered while loading {fname}"
+            )
 
 
 @app.get("/uploads/get/labels/{fname}")
