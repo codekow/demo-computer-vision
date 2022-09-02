@@ -3,23 +3,29 @@
 
 import subprocess
 import yaml
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 import os
 import shutil
-ROOT_DIR = os.environ['SIMPLEVIS_DATA']
-# ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+from pathlib import Path
 
-os.chdir('yolov5')
-UPLOAD_DIR = ROOT_DIR + "/" + "uploaded-files"
-DETECT_DIR = ROOT_DIR + "/" + "detected-files"
-# checking if the directory
-# exist or not.
-if not os.path.exists(UPLOAD_DIR):
-    os.makedirs(UPLOAD_DIR)
-if not os.path.exists(DETECT_DIR):
-    os.makedirs(DETECT_DIR)
+ROOT_DIR = Path(
+    os.environ.get(
+        'SIMPLEVIS_DATA',
+        Path(__file__).parent.resolve()
+    )
+)
+YOLO_DIR = Path(
+    os.environ.get(
+        'YOLO_DIR',
+        Path().resolve().joinpath('yolov5')
+    )
+)
 
+UPLOAD_DIR = ROOT_DIR.joinpath("uploaded-files")
+DETECT_DIR = ROOT_DIR.joinpath("detected-files")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(DETECT_DIR, exist_ok=True)
 
 PRE_TRAINED = "yolov5s.pt"
 CST_TRAINED = "coco_uavs.pt"
@@ -31,7 +37,7 @@ VIDEO_EXTS = [".m4v", ".mov", ".mp4"]
 
 
 # Load the classes
-with open("data/" + CST_CLASSES, 'r') as stream:
+with open(YOLO_DIR.joinpath("data").joinpath(CST_CLASSES), 'r') as stream:
     try:
         parsed_yaml = yaml.safe_load(stream)
         OBJECT_CLASSES = parsed_yaml['names']
@@ -48,13 +54,12 @@ def index():
 
 @app.get("/uploads/get")
 def getUploadList():
-    uploadlist = os.listdir(UPLOAD_DIR)
-    return {"images": uploadlist}
+    return {"images": [f.stem for f in UPLOAD_DIR.iterdir()]}
 
 
 @app.get("/uploads/get/image/{fname}")
 async def main(fname):
-    return FileResponse(DETECT_DIR + "/exp/" + fname)
+    return FileResponse(DETECT_DIR.joinpath("exp").joinpath(fname))
 
 
 @app.get("/uploads/get/labels/{fname}")
@@ -65,22 +70,18 @@ def getLabels(fname):
 
 @app.get("/cleanall")
 def cleanall():
-    msg = {}
-    uploadlist = os.listdir(UPLOAD_DIR)
     try:
-        for f in uploadlist:
-            os.remove(UPLOAD_DIR + "/" + f)
-
-        if os.path.exists(DETECT_DIR + "/exp/labels"):
-            shutil.rmtree(DETECT_DIR + "/exp/labels")
-        detectionlist = os.listdir(DETECT_DIR + "/exp")
-        for d in detectionlist:
-            os.remove(DETECT_DIR + "/exp/" + d)
-        msg = {"message": "All directories cleaned."}
+        for f in UPLOAD_DIR.iterdir():
+            os.remove(f)
+        exp_dir = DETECT_DIR.joinpath("exp")
+        for detection in exp_dir.iter_dir():
+            shutil.rmtree(detection)
+        return {"message": "All directories cleaned."}
     except Exception as err:
-        msg = {"message": "An error has occurred: " + str(err)}
-
-    return msg
+        raise HTTPException(
+            status_code=500,
+            detail=f"An error has occurred: {str(err)}"
+        )
 
 
 @app.post("/detect/{model}")
@@ -198,6 +199,7 @@ def get_labels(filename):
         det_list.sort()
         obj_list = []
         for c in OBJECT_CLASSES:
+
             cname = OBJECT_CLASSES[c]
             count = countX(det_list, c)
             if count > 0:

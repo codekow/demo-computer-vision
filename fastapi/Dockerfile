@@ -21,7 +21,8 @@ RUN pip install -r requirements.txt \
  && chown 1001:1001 uploaded-files detected-files
 
 USER 1001
-ENV SIMPLEVIS_DATA=/opt/app-root/src/simplevis-data
+ENV SIMPLEVIS_DATA=/opt/app-root/src/simplevis-data \
+    YOLO_DIR=/opt/app-root/src/yolov5
 EXPOSE 8000
-ENTRYPOINT "/usr/local/bin/uvicorn"
+ENTRYPOINT ["/usr/local/bin/uvicorn"]
 CMD ["main:app", "--host", "0.0.0.0"]
