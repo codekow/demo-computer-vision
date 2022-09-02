@@ -10,7 +10,7 @@ import os
 import shutil
 from pathlib import Path
 
-ROOT_DIR = Path(
+SIMPLEVIS_DATA = Path(
     os.environ.get(
         'SIMPLEVIS_DATA',
         Path(__file__).parent.resolve()
@@ -24,8 +24,8 @@ YOLO_DIR = Path(
 )
 
 WEIGHTS_FILE = YOLO_DIR.joinpath('weights.pt')
-UPLOAD_DIR = ROOT_DIR.joinpath("uploaded-files")
-DETECT_DIR = ROOT_DIR.joinpath("detected-files")
+UPLOAD_DIR = SIMPLEVIS_DATA.joinpath("uploaded-files")
+DETECT_DIR = SIMPLEVIS_DATA.joinpath("detected-files")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(DETECT_DIR, exist_ok=True)
 
