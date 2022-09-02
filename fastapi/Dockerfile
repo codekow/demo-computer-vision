@@ -9,9 +9,9 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.n
  && dnf clean all
 
 RUN git clone --branch v6.2 https://github.com/ultralytics/yolov5.git \
- && wget -O yolov5/data/uavs2.yaml http://nexus.davenet.local:8081/repository/simplevis/model/uavs2.yaml \
- && wget -O yolov5/coco_uavs.pt http://nexus.davenet.local:8081/repository/simplevis/model/coco_uavs.pt \
- && wget -O yolov5/yolov5s.pt http://nexus.davenet.local:8081/repository/simplevis/model/yolov5s.pt
+ && wget -O yolov5/data/uavs2.yaml https://s3.jharmison.com/simplevis/public/uavs2.yaml \
+ && wget -O yolov5/coco_uavs.pt https://s3.jharmison.com/simplevis/public/coco_uavs.pt \
+ && wget -O yolov5/yolov5s.pt https://s3.jharmison.com/simplevis/public/yolov5s.pt
 
 COPY app/ ./
 
