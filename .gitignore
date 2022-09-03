@@ -130,7 +130,10 @@ dmypy.json
 
 # yolo artifacts
 *.pt
-
 detected-files
 uploaded-files
 yolov5
+
+# VIM
+tags
+*.swp
