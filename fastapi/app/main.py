@@ -85,8 +85,8 @@ def cleanall():
         for f in UPLOAD_DIR.iterdir():
             os.remove(f)
         exp_dir = DETECT_DIR.joinpath("exp")
-        for detection in exp_dir.iter_dir():
-            shutil.rmtree(detection)
+        if os.path.exists(exp_dir):
+            shutil.rmtree(exp_dir)
         return {"message": "All directories cleaned."}
     except Exception as err:
         raise HTTPException(
@@ -143,7 +143,9 @@ def detect(file: UploadFile):
     else:
         try:
             # ffmpeg to transcode the video file
-            video_file = DETECT_DIR.joinpath('exp').joinpath(file.filename)
+            newext = os.path.splitext(file.filename)
+            newfile = newext[0] + '.mp4'            
+            video_file = DETECT_DIR.joinpath('exp').joinpath(newfile)
             temp_video_file = video_file.with_stem('temp')
             video_file.rename(temp_video_file)
             _ = subprocess.run([
@@ -217,3 +219,4 @@ def get_labels(filename):
 
 def isSafe(filename):
     return Path(filename).suffix.upper() in SAFE_2_PROCESS
+
