@@ -14,11 +14,11 @@ metadata:
 spec:
   nodeSelector:
     nodeSelectorTerms:
-    - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - ocpsno.davenet.local
+      - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+              - ocpsno.davenet.local
   storageClassDevices:
     - storageClassName: "local-sc-simplevis-data"
       volumeMode: Filesystem
@@ -34,11 +34,11 @@ metadata:
 spec:
   nodeSelector:
     nodeSelectorTerms:
-    - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - ocpsno.davenet.local
+      - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+              - ocpsno.davenet.local
   storageClassDevices:
     - storageClassName: "local-sc-simplevis-runs"
       volumeMode: Filesystem

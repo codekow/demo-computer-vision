@@ -44,7 +44,6 @@ spec:
               value: "OpenShift"
             - name: SIMPLEVIS_DATA
               value: /opt/app-root/src/simplevis-data
-          imagePullPolicy: Always
       volumes:
         - name: simplevis-data
           persistentVolumeClaim:

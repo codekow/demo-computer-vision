@@ -31,7 +31,6 @@ spec:
       containers:
         - name: simplevis-full
           image: quay.io/dawhite20910/simplevis:1.2.4.3
-          imagePullPolicy: Always
           ports:
             - containerPort: 5001
               protocol: TCP
