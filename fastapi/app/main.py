@@ -26,8 +26,10 @@ YOLO_DIR = Path(
 WEIGHTS_FILE = YOLO_DIR.joinpath('weights.pt')
 UPLOAD_DIR = SIMPLEVIS_DATA.joinpath("uploaded-files")
 DETECT_DIR = SIMPLEVIS_DATA.joinpath("detected-files")
+VIDEO_DIR = SIMPLEVIS_DATA.joinpath("video-files")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(DETECT_DIR, exist_ok=True)
+os.makedirs(VIDEO_DIR, exist_ok=True)
 
 SAFE_2_PROCESS = [".JPG", ".JPEG", ".PNG", ".M4V", ".MOV", ".MP4"]
 VIDEO_EXTS = [".M4V", ".MOV", ".MP4"]
@@ -53,13 +55,17 @@ def index():
 
 @app.get("/uploads/get")
 def getUploadList():
-    return {"images": [f.parts[-1] for f in UPLOAD_DIR.iterdir()]}
+    return {"images": [f.parts[-1] for f in UPLOAD_DIR.iterdir()], "videos": [v.parts[-1] for v in VIDEO_DIR.iterdir()]}
 
 
 @app.get("/uploads/get/image/{fname}")
 async def main(fname):
     try:
-        return FileResponse(DETECT_DIR.joinpath("exp").joinpath(fname))
+        my_ext = Path(fname).suffix.upper()
+        if my_ext not in VIDEO_EXTS:
+            return FileResponse(DETECT_DIR.joinpath("exp").joinpath(fname))
+        else:
+            return FileResponse(VIDEO_DIR.joinpath(fname))
     except RuntimeError as exc:
         if "does not exist" in str(exc):
             raise HTTPException(
@@ -83,6 +89,8 @@ def getLabels(fname):
 def cleanall():
     try:
         for f in UPLOAD_DIR.iterdir():
+            os.remove(f)
+        for f in VIDEO_DIR.iterdir():
             os.remove(f)
         exp_dir = DETECT_DIR.joinpath("exp")
         if os.path.exists(exp_dir):
@@ -169,6 +177,8 @@ def detect(file: UploadFile):
                 str(video_file)
             ], stdout=subprocess.PIPE)
             os.remove(temp_video_file)
+            os.remove(UPLOAD_DIR.joinpath(file.filename))
+            video_file.rename(VIDEO_DIR.joinpath(newfile))
         except Exception as err:
             raise HTTPException(
                 status_code=500,
