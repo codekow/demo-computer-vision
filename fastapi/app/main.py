@@ -9,6 +9,7 @@ from yolov5.detect import run as yolov5_detect
 import os
 import shutil
 from pathlib import Path
+from datetime import datetime
 
 SIMPLEVIS_DATA = Path(
     os.environ.get(
@@ -191,6 +192,45 @@ def detect(file: UploadFile):
             "data": {}
         }
 
+
+@app.post("/detect/camera")
+def detect():
+    now = datetime.now()
+    date_time = now.strftime("%Y%m%d-%H%M%S")
+    webcam_filename = 'webcam' + date_time + '.jpg'
+    _ = subprocess.run([
+        'ffmpeg',
+        '-y',
+        '-f',
+        'v4l2',
+        '-video_size',
+        '640x480',
+        '-i',
+        '/dev/video0',
+        '-frames:v',
+        '1',
+        str(UPLOAD_DIR.joinpath(webcam_filename))
+    ], stdout=subprocess.PIPE)
+
+    detect_args = {
+        'weights': WEIGHTS_FILE,
+        'source': str(UPLOAD_DIR.joinpath(webcam_filename)),
+        'project': DETECT_DIR,
+        'exist_ok': True,
+    }
+    detect_args['save_txt'] = True
+
+    # Actually run the inference
+    yolov5_detect(**detect_args)
+
+    labels = get_labels(webcam_filename)
+    return {
+        "filename": webcam_filename,
+        # "contentType": file.content_type,
+        "detectedObj": labels,
+        "save_path": UPLOAD_DIR.joinpath(webcam_filename),
+        "data": {}
+    }
 
 def countX(lst, x):
     count = 0

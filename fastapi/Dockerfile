@@ -30,7 +30,8 @@ RUN pip install --no-cache-dir -r requirements.txt \
 
 COPY app/ ./
 
-USER 1001
+#USER 1001
+USER 0
 EXPOSE 8000
 ENTRYPOINT ["/usr/local/bin/uvicorn"]
 CMD ["main:app", "--host", "0.0.0.0"]
