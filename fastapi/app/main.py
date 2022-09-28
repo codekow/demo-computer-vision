@@ -37,7 +37,7 @@ VIDEO_EXTS = [".M4V", ".MOV", ".MP4"]
 
 
 # Load the classes
-with open(YOLO_DIR.joinpath('data').joinpath('uavs2.yaml'), 'r') as f:
+with open(YOLO_DIR.joinpath('data').joinpath('data.yaml'), 'r') as f:
     try:
         parsed_yaml = yaml.safe_load(f)
         OBJECT_CLASSES = parsed_yaml['names']
@@ -254,15 +254,17 @@ def get_labels(filename):
                 det_list.append(int(thisline[0]))
         det_list.sort()
         obj_list = []
+        idx = 0
         for c in OBJECT_CLASSES:
-
-            cname = OBJECT_CLASSES[c]
-            count = countX(det_list, c)
+            cname = OBJECT_CLASSES[idx]
+            count = countX(det_list, idx)
             if count > 0:
                 obj = {"object": cname, "count": count}
                 obj_list.append(obj)
+            idx += 1
         obs = obj_list
-    except Exception:
+    except Exception as e:
+        print("Exception: " + str(e))
         obs = ["no objects detected"]
     return obs
 
