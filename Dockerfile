@@ -3,6 +3,9 @@ FROM quay.io/centos/centos:stream9
 WORKDIR /opt/app-root/src
 ARG YOLOv5_VERSION=6.2
 ARG WEIGHTS=yolov5s
+ARG TRAINING_NAME=pretrained
+ARG TRAINING_VER=1.0
+ARG MODEL_CLASSES=coco128.yaml
 
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm \
                    https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-9.noarch.rpm \
@@ -17,13 +20,10 @@ RUN mkdir -p /usr/local/lib/python3.9/site-packages \
  && pip install --no-cache-dir \
     -r /usr/local/lib/python3.9/site-packages/yolov5/requirements.txt
 
-ENV TRAINING_NAME=pretrained
-ENV TRAINING_VER=1.0
-ENV MODEL_CLASSES=coco128.yaml
 ENV YOLOv5_VERSION=6.2
 ENV PYDIR=/usr/local/lib/python3.9/site-packages
 ENV YOLO_DIR=${PYDIR}/yolov5
-ENV WEIGHTS=yolov5s.pt
+# ENV WEIGHTS=yolov5s.pt
 ENV ARTI_REPO=http://nexus.davenet.local:8081/repository/simplevis
 ENV ARTI_USER=simplevis
 ENV ARTI_PWD=simplevis123
