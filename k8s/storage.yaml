@@ -3,6 +3,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: pvc-simplevis
+  namespace: simplevis
 spec:
   accessModes:
     - ReadWriteOnce

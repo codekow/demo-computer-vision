@@ -17,13 +17,13 @@ RUN mkdir -p /usr/local/lib/python3.9/site-packages \
  && pip install --no-cache-dir \
     -r /usr/local/lib/python3.9/site-packages/yolov5/requirements.txt
 
-ENV TRAINING_NAME=flyingthings
-ENV TRAINING_VER=1.2
-ENV MODEL_CLASSES=flyingthings.yaml
+ENV TRAINING_NAME=pretrained
+ENV TRAINING_VER=1.0
+ENV MODEL_CLASSES=coco128.yaml
 ENV YOLOv5_VERSION=6.2
 ENV PYDIR=/usr/local/lib/python3.9/site-packages
 ENV YOLO_DIR=${PYDIR}/yolov5
-ENV WEIGHTS=flyingthings.pt
+ENV WEIGHTS=yolov5s.pt
 ENV ARTI_REPO=http://nexus.davenet.local:8081/repository/simplevis
 ENV ARTI_USER=simplevis
 ENV ARTI_PWD=simplevis123
