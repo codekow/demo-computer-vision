@@ -21,9 +21,12 @@ RUN mkdir -p /usr/local/lib/python3.9/site-packages \
     -r /usr/local/lib/python3.9/site-packages/yolov5/requirements.txt
 
 ENV YOLOv5_VERSION=6.2
+ENV WEIGHTS=${WEIGHTS}
+ENV TRAINING_NAME=${TRAINING_NAME}
+ENV TRAINING_VER=${TRAINING_VER}
+ENV MODEL_CLASSES=${MODEL_CLASSES}
 ENV PYDIR=/usr/local/lib/python3.9/site-packages
 ENV YOLO_DIR=${PYDIR}/yolov5
-# ENV WEIGHTS=yolov5s.pt
 ENV ARTI_REPO=http://nexus.davenet.local:8081/repository/simplevis
 ENV ARTI_USER=simplevis
 ENV ARTI_PWD=simplevis123

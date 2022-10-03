@@ -5,5 +5,9 @@ volumeClaimTemplateFile=https://raw.githubusercontent.com/openshift/pipelines-tu
 -p deployment-name=simplevis-flyingthings \
 -p git-url=https://github.com/redhat-na-ssa/simplevis.git \
 -p git-revision=develop \
+-p WEIGHTS=flyingthings.pt \
+-p TRAINING_NAME=flyingthings \
+-p TRAINING_VER=1.0 \
+-p MODEL_CLASSES=flyingthings.yaml \
 -p IMAGE=image-registry.openshift-image-registry.svc:5000/simplevis/simplevis-flyingthings \
 --use-param-defaults
