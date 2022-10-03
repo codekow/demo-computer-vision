@@ -46,8 +46,7 @@ spec:
               value: /opt/app-root/src/simplevis-data
       volumes:
         - name: simplevis-data
-          persistentVolumeClaim:
-            claimName: pvc-simplevis
+          emptyDir: {}
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
