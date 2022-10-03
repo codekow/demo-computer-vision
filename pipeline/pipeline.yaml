@@ -20,18 +20,9 @@ spec:
   - name: IMAGE
     type: string
     description: image to be build from the code
-  - name: WEIGHTS
+  - name: BUILD_EXTRA_ARGS
     type: string
-    description: weights file to be used
-  - name: TRAINING_NAME
-    type: string
-    description: name used to model branch
-  - name: TRAINING_VER
-    type: string
-    description: version of base models to be applied
-  - name: MODEL_CLASSES
-    type: string
-    description: file with model classes
+    description: build args for docker file
   tasks:
   - name: fetch-repository
     taskRef:
@@ -54,6 +45,8 @@ spec:
       name: buildah
       kind: ClusterTask
     params:
+    - name: BUILD_EXTRA_ARGS
+      value: $(params.BUILD_EXTRA_ARGS)
     - name: IMAGE
       value: $(params.IMAGE)
     workspaces:
