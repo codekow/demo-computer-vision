@@ -20,6 +20,18 @@ spec:
   - name: IMAGE
     type: string
     description: image to be build from the code
+  - name: WEIGHTS
+    type: string
+    description: weights file to be used
+  - name: TRAINING_NAME
+    type: string
+    description: name used to model branch
+  - name: TRAINING_VER
+    type: string
+    description: version of base models to be applied
+  - name: MODEL_CLASSES
+    type: string
+    description: file with model classes
   tasks:
   - name: fetch-repository
     taskRef:

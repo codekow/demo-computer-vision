@@ -2,7 +2,7 @@ FROM quay.io/centos/centos:stream9
 
 WORKDIR /opt/app-root/src
 ARG YOLOv5_VERSION=6.2
-ARG WEIGHTS=yolov5s
+ARG WEIGHTS=yolov5s.pt
 ARG TRAINING_NAME=pretrained
 ARG TRAINING_VER=1.0
 ARG MODEL_CLASSES=coco128.yaml
