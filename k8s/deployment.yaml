@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: simplevis-model
-          image: image-registry.openshift-image-registry.svc:5000/simplevis/simplevis-flyingthings
+          image: image-registry.openshift-image-registry.svc:5000/simplevis/simplevis-pretrained
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
