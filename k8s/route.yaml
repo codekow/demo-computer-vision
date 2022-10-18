@@ -2,12 +2,12 @@
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
-  name: simplevis-web
+  name: pretrained-route
   namespace: simplevis
 spec:
   to:
     kind: Service
-    name: simplevis-service
+    name: pretrained-service
     weight: 100
   port:
     targetPort: 8000

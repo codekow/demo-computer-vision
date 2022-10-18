@@ -13,7 +13,7 @@ podman build . --build-arg WEIGHTS=flyingthings.pt \
 --build-arg TRAINING_NAME=flyingthings \
 --build-arg MODEL_CLASSES=flyingthings.yaml \
 --build-arg TRAINING_VER=1.0 \
--t nexus.davenet.local:8080/simplevis/simevis:flyingthings
+-t nexus.davenet.local:8080/simplevis/simplevis:flyingthings
 
 To run:
 -------

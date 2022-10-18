@@ -2,35 +2,31 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: simplevis-deployment
+  name: simplevis-pretrained-deployment
   annotations:
     alpha.image.policy.openshift.io/resolve-names: '*'
     app.openshift.io/route-disabled: 'false'
     deployment.kubernetes.io/revision: '1'
   namespace: simplevis
   labels:
-    app: simplevis
-    app.kubernetes.io/component: simplevis-model
-    app.kubernetes.io/instance: simplevis-model
-    app.kubernetes.io/name: simplevis-model
-    app.kubernetes.io/part-of: simplevis-model-app
+    app: simplevis-pretrained
     app.openshift.io/runtime-namespace: simplevis
 spec:
   restartPolicy: Never
   replicas: 1
   selector:
     matchLabels:
-      app: simplevis
+      app: simplevis-pretrained
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: simplevis
-        deploymentconfig: simplevis
+        app: simplevis-pretrained
+        deploymentconfig: simplevis-pretrained
     spec:
       containers:
-        - name: simplevis-model
-          image: image-registry.openshift-image-registry.svc:5000/simplevis/simplevis-pretrained
+        - name: simplevis-pretrained
+          image: nexus.davenet.local:8080/simplevis/simplevis:pretrained
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
