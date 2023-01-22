@@ -1,5 +1,7 @@
 # Computer Vision Demo
 
+[![File Linting](https://github.com/redhat-na-ssa/simplevis/actions/workflows/linting.yaml/badge.svg)](https://github.com/redhat-na-ssa/simplevis/actions/workflows/linting.yaml)
+
 This repo helps to demonstrate the use of computer vision, containers, and openshift
 
 ## TODO
