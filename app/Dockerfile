@@ -1,4 +1,4 @@
-FROM quay.io/centos/centos:stream9
+FROM registry.access.redhat.com/ubi9/ubi:latest
 
 WORKDIR /opt/app-root/src
 ARG YOLOv5_VERSION=6.2
@@ -47,6 +47,6 @@ COPY app/ ./
 
 #USER 1001
 USER 0
-EXPOSE 8000
+EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/uvicorn"]
 CMD ["main:app", "--host", "0.0.0.0"]

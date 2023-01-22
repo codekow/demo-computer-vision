@@ -1,37 +1,16 @@
-FastAPI Simple Object Detection
-===============================
+# Computer Vision Demo
 
-To build:
----------
+This repo helps to demonstrate the use of computer vision, containers, and openshift
 
-```sh
-podman build . -t simplevis:pretrained
-podman build . --build-arg WEIGHTS=coco_uavs -t simplevis:uavs
-```
+## TODO
+- [ ] tell story
+- [ ] address dependencies
 
-podman build . --build-arg WEIGHTS=flyingthings.pt \
---build-arg TRAINING_NAME=flyingthings \
---build-arg MODEL_CLASSES=flyingthings.yaml \
---build-arg TRAINING_VER=1.0 \
--t nexus.davenet.local:8080/simplevis/simplevis:flyingthings
+Figure 3
+![Figure 1](docs/simplevis-figs-3.jpg)
 
-To run:
--------
+Figure 4
+![Figure 1](docs/simplevis-figs-4.jpg)
 
-With the pretrained weights:
-
-```sh
-podman run -d --name simplevis -p 8000:8000 -v simplevis-data:/opt/app-root/src/simplevis-data simplevis:pretrained
-```
-
-With the custom weights:
-```sh
-podman run -d --name simplevis -p 8000:8000 -v simplevis-data:/opt/app-root/src/simplevis-data simplevis:uavs
-```
-
-
-To access:
-----------
-
-Open on http://localhost:8000/docs in your browser to access the Swagger UI
-
+Figure 5
+![Figure 1](docs/simplevis-figs-5.jpg)

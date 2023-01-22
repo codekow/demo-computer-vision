@@ -1,5 +1,5 @@
 # uvicorn main:app --reload
-# uvicorn app:app --reload --host localhost --host 0.0.0.0 --port 9000
+# uvicorn app:app --reload --host localhost --host 0.0.0.0 --port 8080
 
 import subprocess
 import yaml
