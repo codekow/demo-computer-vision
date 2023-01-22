@@ -5,60 +5,60 @@ metadata:
   namespace: simplevis
 spec:
   workspaces:
-  - name: shared-workspace
+    - name: shared-workspace
   params:
-  - name: deployment-name
-    type: string
-    description: name of the deployment to be patched
-  - name: git-url
-    type: string
-    description: url of the git repo for the code of deployment
-  - name: git-revision
-    type: string
-    description: revision to be used from repo of the code for deployment
-    default: main
-  - name: IMAGE
-    type: string
-    description: image to be build from the code
-  - name: BUILD_EXTRA_ARGS
-    type: string
-    description: build args for docker file
-  tasks:
-  - name: fetch-repository
-    taskRef:
-      name: git-clone
-      kind: ClusterTask
-    workspaces:
-    - name: output
-      workspace: shared-workspace
-    params:
-    - name: url
-      value: $(params.git-url)
-    - name: subdirectory
-      value: ""
-    - name: deleteExisting
-      value: "true"
-    - name: revision
-      value: $(params.git-revision)
-  - name: build-image
-    taskRef:
-      name: buildah
-      kind: ClusterTask
-    params:
-    - name: BUILD_EXTRA_ARGS
-      value: $(params.BUILD_EXTRA_ARGS)
+    - name: deployment-name
+      type: string
+      description: name of the deployment to be patched
+    - name: git-url
+      type: string
+      description: url of the git repo for the code of deployment
+    - name: git-revision
+      type: string
+      description: revision to be used from repo of the code for deployment
+      default: main
     - name: IMAGE
-      value: $(params.IMAGE)
-    workspaces:
-    - name: source
-      workspace: shared-workspace
-    runAfter:
-    - fetch-repository
-  # - name: apply-manifests
-  #   taskRef:
-  #     name: apply-manifests
-  #   workspaces:
-  #   - name: source
-  #     workspace: shared-workspace
-  #   runAfter:
-  #   - build-image
+      type: string
+      description: image to be build from the code
+    - name: BUILD_EXTRA_ARGS
+      type: string
+      description: build args for docker file
+  tasks:
+    - name: fetch-repository
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: subdirectory
+          value: ""
+        - name: deleteExisting
+          value: "true"
+        - name: revision
+          value: $(params.git-revision)
+    - name: build-image
+      taskRef:
+        name: buildah
+        kind: ClusterTask
+      params:
+        - name: BUILD_EXTRA_ARGS
+          value: $(params.BUILD_EXTRA_ARGS)
+        - name: IMAGE
+          value: $(params.IMAGE)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      runAfter:
+        - fetch-repository
+    # - name: apply-manifests
+    #   taskRef:
+    #     name: apply-manifests
+    #   workspaces:
+    #     - name: source
+    #       workspace: shared-workspace
+    #   runAfter:
+    #     - build-image

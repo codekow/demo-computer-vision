@@ -1,9 +1,29 @@
 #!/bin/bash
 set -e
 
-# activate python venv
-# shellcheck disable=SC1091
-[ -d venv ] && . venv/bin/activate || exit
+usage(){
+  echo "
+  setup virtualenv:
+  python -m venv venv
+  "
+  exit 0
+}
+
+setup_venv(){
+  python -m venv venv
+  pip install -q -U pip
+  pip install -q -r requirements-dev.txt
+
+  check_venv || usage
+}
+
+check_venv(){
+  # activate python venv
+  # shellcheck disable=SC2015,SC1091
+  [ -d venv ] && . venv/bin/activate || setup_venv
+}
+
+check_venv
 
 # chcek scripts
 shellcheck scripts/*
