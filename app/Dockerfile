@@ -1,52 +1,51 @@
-FROM registry.access.redhat.com/ubi9/ubi:latest
+# hadolint global ignore=DL3041
+FROM quay.io/centos/centos:stream9
 
 WORKDIR /opt/app-root/src
+
 ARG YOLOv5_VERSION=6.2
 ARG WEIGHTS=yolov5s.pt
 ARG TRAINING_NAME=pretrained
 ARG TRAINING_VER=1.0
 ARG MODEL_CLASSES=coco128.yaml
+ARG ARTI_REPO=http://nexus.davenet.local:8081/repository/simplevis
+
+ENV PYDIR=/usr/local/lib/python3.9/site-packages
+ENV YOLO_DIR=${PYDIR}/yolov5
+
 
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm \
                    https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-9.noarch.rpm \
                    http://mirror.stream.centos.org/9-stream/CRB/x86_64/os/Packages/ladspa-1.13-28.el9.x86_64.rpm \
-                   https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-9.noarch.rpm \
- && dnf -y install ffmpeg libGL git wget python3-pip \
- && dnf clean all
+                   https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-9.noarch.rpm && \
+    dnf -y install git wget python3-pip ffmpeg libGL && \
+    dnf clean all
 
-RUN mkdir -p /usr/local/lib/python3.9/site-packages \
- && cd /usr/local/lib/python3.9/site-packages \
- && git clone --branch v${YOLOv5_VERSION} --depth 1 https://github.com/ultralytics/yolov5.git \
- && pip install --no-cache-dir \
-    -r /usr/local/lib/python3.9/site-packages/yolov5/requirements.txt
-
-ENV YOLOv5_VERSION=6.2
-ENV WEIGHTS=${WEIGHTS}
-ENV TRAINING_NAME=${TRAINING_NAME}
-ENV TRAINING_VER=${TRAINING_VER}
-ENV MODEL_CLASSES=${MODEL_CLASSES}
-ENV PYDIR=/usr/local/lib/python3.9/site-packages
-ENV YOLO_DIR=${PYDIR}/yolov5
-ENV ARTI_REPO=http://nexus.davenet.local:8081/repository/simplevis
-ENV ARTI_USER=simplevis
-ENV ARTI_PWD=simplevis123
-
-RUN cd /usr/local/lib/python3.9/site-packages/yolov5 \
- && wget -O data/data.yaml ${ARTI_REPO}/${TRAINING_NAME}/${TRAINING_VER}/${MODEL_CLASSES} \
- && wget -O weights.pt ${ARTI_REPO}/${TRAINING_NAME}/${TRAINING_VER}/${WEIGHTS}
-
-COPY requirements.txt ./
+RUN mkdir -p ${PYDIR} && \
+    git clone --branch v${YOLOv5_VERSION} --depth 1 https://github.com/ultralytics/yolov5.git ${YOLO_DIR} && \
+    rm -rf ${YOLO_DIR}/.git && \
+    pip install --no-cache-dir -U pip==23.* && \
+    pip install --no-cache-dir \
+      -r ${YOLO_DIR}/requirements.txt
 
 ENV SIMPLEVIS_DATA=/opt/app-root/src/simplevis-data
 
-RUN pip install --no-cache-dir -r requirements.txt \
- && mkdir -p ${SIMPLEVIS_DATA} \
- && chown 1001:1001 ${SIMPLEVIS_DATA}
+COPY requirements.txt ./
 
-COPY app/ ./
+RUN pip install --no-cache-dir \
+      -r requirements.txt && \
+    mkdir -p ${SIMPLEVIS_DATA} && \
+    chown -R 1001:1001 ${SIMPLEVIS_DATA}
 
-#USER 1001
-USER 0
+COPY . ./
+
+# RUN cd ${YOLO_DIR} && \
+#     wget -O data/data.yaml ${ARTI_REPO}/${TRAINING_NAME}/${TRAINING_VER}/${MODEL_CLASSES} && \
+#     wget -O weights.pt ${ARTI_REPO}/${TRAINING_NAME}/${TRAINING_VER}/${WEIGHTS}
+
+
+USER 1001
+
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/uvicorn"]
 CMD ["main:app", "--host", "0.0.0.0"]
