@@ -1,33 +1,35 @@
-# uvicorn main:app --reload
+#!/usr/bin/env python
+# 
+# https://stackoverflow.com/questions/1523427/what-is-the-common-header-format-of-python-files
+#  uvicorn main:app --reload
 # uvicorn app:app --reload --host localhost --host 0.0.0.0 --port 8080
+
+import os
+import shutil
 
 import subprocess
 import yaml
 from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import FileResponse
+from fastapi.responses import HTMLResponse
 from yolov5.detect import run as yolov5_detect
-import os
-import shutil
+
+import uvicorn
+
+import markdown
+
 from pathlib import Path
 from datetime import datetime
 
-SIMPLEVIS_DATA = Path(
-    os.environ.get(
-        'SIMPLEVIS_DATA',
-        Path(__file__).parent.resolve()
-    )
-)
-YOLO_DIR = Path(
-    os.environ.get(
-        'YOLOv5_DIR',
-        Path('/usr/local/lib/python3.9/site-packages/yolov5')
-    )
+APP_DATA = Path(
+    os.environ.get('SIMPLEVIS_DATA', 'data')
 )
 
-WEIGHTS_FILE = YOLO_DIR.joinpath('weights.pt')
-UPLOAD_DIR = SIMPLEVIS_DATA.joinpath("uploaded-files")
-DETECT_DIR = SIMPLEVIS_DATA.joinpath("detected-files")
-VIDEO_DIR = SIMPLEVIS_DATA.joinpath("video-files")
+# WEIGHTS_FILE = YOLO_DIR.joinpath('weights.pt')
+UPLOAD_DIR = APP_DATA.joinpath("upload")
+DETECT_DIR = APP_DATA.joinpath("detect")
+VIDEO_DIR = APP_DATA.joinpath("video")
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(DETECT_DIR, exist_ok=True)
 os.makedirs(VIDEO_DIR, exist_ok=True)
@@ -36,22 +38,35 @@ SAFE_2_PROCESS = [".JPG", ".JPEG", ".PNG", ".M4V", ".MOV", ".MP4"]
 VIDEO_EXTS = [".M4V", ".MOV", ".MP4"]
 
 
-# Load the classes
-with open(YOLO_DIR.joinpath('data').joinpath('data.yaml'), 'r') as f:
-    try:
-        parsed_yaml = yaml.safe_load(f)
-        OBJECT_CLASSES = parsed_yaml['names']
-    except yaml.YAMLError as exc:
-        raise RuntimeError(f"Unable to load classes from yaml: {str(exc)}")
-    except Exception as exc:
-        raise RuntimeError(f"Unable to identify class names: {str(exc)}")
+# # Load the classes
+# with open(YOLO_DIR.joinpath('data').joinpath('data.yaml'), 'r') as f:
+#     try:
+#         parsed_yaml = yaml.safe_load(f)
+#         OBJECT_CLASSES = parsed_yaml['names']
+#     except yaml.YAMLError as exc:
+#         raise RuntimeError(f"Unable to load classes from yaml: {str(exc)}")
+#     except Exception as exc:
+#         raise RuntimeError(f"Unable to identify class names: {str(exc)}")
 
 app = FastAPI()
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def index():
-    return {"status": "Everything`s Groovy"}
+
+    with open('README.md', 'r') as f:
+        index = f.read()
+        html = markdown.markdown(index)
+        response = "<HTML>\n" + html + "\n</HTML>"
+        return response
+
+@app.get("/healthz", status_code=204, response_model=None, tags=["healthz"],
+            summary="Service for 'Health Check'",
+            description="This entrypoint is used to check if the service is alive or dead.",
+            # include_in_schema=False
+            )
+def healthz() -> None:
+    return "ok"
 
 
 @app.get("/uploads/get")
@@ -272,3 +287,5 @@ def get_labels(filename):
 def isSafe(filename):
     return Path(filename).suffix.upper() in SAFE_2_PROCESS
 
+if __name__ == "__main__":
+    uvicorn.run(app, host='0.0.0.0', port=8080, debug=true)
