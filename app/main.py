@@ -4,7 +4,20 @@
 from fastapi import FastAPI, APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
 
-import markdown
+from markdown import markdown
+import markdown.extensions.fenced_code
+
+def render_markdown(file):
+    """Render Markdown Syntax to final HTML."""
+    with open(file, "r") as input_file:
+        text = input_file.read()
+        input_file.close()
+        
+        rendered = markdown.markdown(text, extensions=['fenced_code', 'codehilite'])
+        html = "<html>\n" + rendered + "\n</html>"
+
+    return html
+
 
 def create_app():
     app = FastAPI()
@@ -15,18 +28,16 @@ def create_app():
     summary="General Info",
     )
     def root():
-        with open("README.md", "r") as f:
-            index = f.read()
-            html = markdown.markdown(index)
-            response = "<HTML>\n" + html + "\n</HTML>"
-            return response
+        return render_markdown('README.md')
 
     import api_v1.healthz
     import api_v1.detect
+    import api_v1.file
     # import api_v1.example
 
     app.include_router(api_v1.healthz.app)
-    app.include_router(api_v1.detect.app, prefix="/v1", tags=["latest"])
+    app.include_router(api_v1.detect.app, prefix="/v1", tags=["latest", "v1"])
+    app.include_router(api_v1.file.app, prefix="/v1", tags=["latest", "v1"])
     # app.include_router(api_v1.example.app, prefix="/v1", tags=["latest"])
 
     return app
