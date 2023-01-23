@@ -6,6 +6,7 @@ http
 localhost
 openshift
 podman
+pre
 pretrained
 repo
 simplevis

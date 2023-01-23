@@ -6,7 +6,6 @@ To access:
 
 Open [docs](docs) in your browser to access the Swagger UI
 
-
 To build:
 ---------
 

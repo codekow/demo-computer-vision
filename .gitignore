@@ -3,6 +3,8 @@ generated/
 scratch/
 data/
 
+dictionary.dic
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,16 +1,18 @@
 #!/bin/bash
+# shellcheck disable=SC2015,SC1091
 set -e
 
 usage(){
   echo "
   setup virtualenv:
-  python -m venv venv
+  python3 -m venv venv
   "
   exit 0
 }
 
 setup_venv(){
-  python -m venv venv
+  python3 -m venv venv
+  source venv/bin/activate
   pip install -q -U pip
   pip install -q -r requirements-dev.txt
 
@@ -19,7 +21,6 @@ setup_venv(){
 
 check_venv(){
   # activate python venv
-  # shellcheck disable=SC2015,SC1091
   [ -d venv ] && . venv/bin/activate || setup_venv
 }
 
