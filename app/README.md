@@ -1,11 +1,17 @@
 FastAPI Simple Object Detection
 ===============================
 
+To access:
+----------
+
+Open [docs](docs) in your browser to access the Swagger UI
+
+
 To build:
 ---------
 
 ```sh
-podman build . -t simplevis:pretrained
+podman build . -t simplevis:pre-trained
 podman build . --build-arg WEIGHTS=coco_uavs -t simplevis:uavs
 ```
 
@@ -18,20 +24,13 @@ podman build . --build-arg WEIGHTS=flyingthings.pt \
 To run:
 -------
 
-With the pretrained weights:
+With the pre-trained weights:
 
 ```sh
-podman run -d --name simplevis -p 8000:8000 -v simplevis-data:/opt/app-root/src/simplevis-data simplevis:pretrained
+podman run -d --name simplevis -p 8080:8080 -v simplevis-data:/opt/app-root/src/simplevis-data simplevis:pretrained
 ```
 
 With the custom weights:
 ```sh
-podman run -d --name simplevis -p 8000:8000 -v simplevis-data:/opt/app-root/src/simplevis-data simplevis:uavs
+podman run -d --name simplevis -p 8080:8080 -v simplevis-data:/opt/app-root/src/simplevis-data simplevis:uavs
 ```
-
-
-To access:
-----------
-
-Open on http://localhost:8000/docs in your browser to access the Swagger UI
-
