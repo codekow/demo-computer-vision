@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-#from model.detect_v1 import Detect
+from pydantic import BaseModel
+from typing import Optional
 
 app = APIRouter(
     prefix="/example",
@@ -7,7 +8,11 @@ app = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+class Model(BaseModel):
+    name: str
+    description: str
+    version: Optional[float]
 
-@app.get("")
-def smoke_test():
-    return "ok"
+@app.post("", response_model=Model)
+async def echo(model: Model):
+    return model
