@@ -46,7 +46,7 @@ def detect_uploaded_file(file: UploadFile):
         raise HTTPException(
             status_code=415,
             detail=(
-                f"Cannot process that file type. " f"Supported types: {SAFE_2_PROCESS}"
+                f"Cannot process {file.filename}. " f"Supported types: {SAFE_2_PROCESS}"
             ),
         )
 
@@ -68,70 +68,9 @@ def detect_uploaded_file(file: UploadFile):
 
 @app.post("/camera")
 def detect_with_attached_camera():
-    now = datetime.now()
-    date_time = now.strftime("%Y%m%d-%H%M%S")
-    webcam_filename = "webcam" + date_time + ".jpg"
-    _ = subprocess.run(
-        [
-            "ffmpeg",
-            "-y",
-            "-f",
-            "v4l2",
-            "-video_size",
-            "640x480",
-            "-i",
-            "/dev/video0",
-            "-frames:v",
-            "1",
-            str(UPLOAD_DIR.joinpath(webcam_filename)),
-        ],
-        stdout=subprocess.PIPE,
-    )
-
-    detect_args = {
-        "weights": WEIGHTS_FILE,
-        "source": str(UPLOAD_DIR.joinpath(webcam_filename)),
-        "project": DETECT_DIR,
-        "exist_ok": True,
-    }
-    detect_args["save_txt"] = True
-
-    # Actually run the inference
-    yolov5_detect(**detect_args)
-
-    labels = get_labels(webcam_filename)
-    return {
-        "filename": webcam_filename,
-        # "contentType": file.content_type,
-        "detectedObj": labels,
-        "save_path": UPLOAD_DIR.joinpath(webcam_filename),
-        "data": {},
-    }
-
-def get_labels(filename):
-    label_dir = DETECT_DIR.joinpath("exp").joinpath("labels")
-    label_file = label_dir.joinpath(filename).with_suffix(".txt")
-    det_list = []
-    obs = []
     try:
-        with open(label_file) as file:
-            lines = file.readlines()
-            lines = [line.rstrip() for line in lines]
-            for line in lines:
-                thisline = line.split()
-                det_list.append(int(thisline[0]))
-        det_list.sort()
-        obj_list = []
-        idx = 0
-        for c in OBJECT_CLASSES:
-            cname = OBJECT_CLASSES[idx]
-            count = countX(det_list, idx)
-            if count > 0:
-                obj = {"object": cname, "count": count}
-                obj_list.append(obj)
-            idx += 1
-        obs = obj_list
-    except Exception as e:
-        print("Exception: " + str(e))
-        obs = ["no objects detected"]
-    return obs
+        detect_camera()
+    except Exception:
+        raise HTTPException(status_code=503, detail="no camera attached")
+    
+    return "ok"

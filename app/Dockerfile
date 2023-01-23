@@ -47,4 +47,4 @@ USER 1001
 
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/uvicorn"]
-CMD ["main:app", "--host", "0.0.0.0", "--port", "8080", --reload]
+CMD ["main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]

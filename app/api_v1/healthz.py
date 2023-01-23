@@ -1,7 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 app = APIRouter(
     prefix="/healthz",
+    tags=["healthz"],
+    # include_in_schema=False
 )
 
 
@@ -11,10 +13,7 @@ app = APIRouter(
     description="This entrypoint is used to check if the service is alive or dead.",
     status_code=204,
     response_model=None,
-    tags=["healthz"],
-    # include_in_schema=False
 )
-
 def healthz_ok():
     return {"status": 200, "title": "OK"}
 
@@ -22,10 +21,6 @@ def healthz_ok():
     "/live",
     summary="Kubernetes Liveliness Check",
     description="This entrypoint is used to check if the service is alive in k8s",
-    status_code=200,
-    response_model=None,
-    tags=["healthz"],
-    # include_in_schema=False
 )
 def liveness():
     return healthz_ok()
@@ -34,16 +29,12 @@ def liveness():
     "/ready",
     summary="Kubernetes Readiness Check",
     description="This entrypoint is used to check if the service is ready in k8s",
-    status_code=200,
-    response_model=None,
-    tags=["healthz"],
-    # include_in_schema=False
 )
 def readiness():
     try:
-        check_model()
+        find_camera_ready()
     except Exception as e:
-        print(e)
-        return { "message": "error"}
-    
+        raise HTTPException(
+            status_code=503, detail=f"{str(e)}"
+        )
     return healthz_ok()
