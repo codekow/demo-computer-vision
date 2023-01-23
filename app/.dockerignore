@@ -1,0 +1,8 @@
+# ignore everything
+*
+
+# allow files
+!README.md
+!requirements.txt
+!main.py
+!api_v1

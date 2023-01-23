@@ -1,5 +1,8 @@
 # hadolint global ignore=DL3041
+# FROM registry.access.redhat.com/ubi9/python-39:1
 FROM quay.io/centos/centos:stream9
+
+USER 0
 
 WORKDIR /opt/app-root/src
 
@@ -18,34 +21,30 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.n
                    https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-9.noarch.rpm \
                    http://mirror.stream.centos.org/9-stream/CRB/x86_64/os/Packages/ladspa-1.13-28.el9.x86_64.rpm \
                    https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-9.noarch.rpm && \
+    /usr/bin/crb enable && \
     dnf -y install git wget python3-pip ffmpeg libGL && \
     dnf clean all
 
 RUN mkdir -p ${PYDIR} && \
     git clone --branch v${YOLOv5_VERSION} --depth 1 https://github.com/ultralytics/yolov5.git ${YOLO_DIR} && \
     rm -rf ${YOLO_DIR}/.git && \
-    pip install --no-cache-dir -U pip==23.* && \
+    pip install --no-cache-dir -U pip==22.* && \
     pip install --no-cache-dir \
       -r ${YOLO_DIR}/requirements.txt
 
-ENV SIMPLEVIS_DATA=/opt/app-root/src/simplevis-data
+ENV SIMPLEVIS_DATA=/opt/app-root/
 
 COPY requirements.txt ./
 
 RUN pip install --no-cache-dir \
       -r requirements.txt && \
     mkdir -p ${SIMPLEVIS_DATA} && \
-    chown -R 1001:1001 ${SIMPLEVIS_DATA}
+    chown -R 1001:0 ${SIMPLEVIS_DATA}
 
 COPY . ./
-
-# RUN cd ${YOLO_DIR} && \
-#     wget -O data/data.yaml ${ARTI_REPO}/${TRAINING_NAME}/${TRAINING_VER}/${MODEL_CLASSES} && \
-#     wget -O weights.pt ${ARTI_REPO}/${TRAINING_NAME}/${TRAINING_VER}/${WEIGHTS}
-
 
 USER 1001
 
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/uvicorn"]
-CMD ["main:app", "--host", "0.0.0.0"]
+CMD ["main:app", "--host", "0.0.0.0", "--port", "8080", --reload]
