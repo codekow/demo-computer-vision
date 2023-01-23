@@ -1,19 +1,16 @@
-FastAPI Simple Object Detection
-===============================
+# FastAPI Simple Object Detection
 
-To access:
-----------
+## API docs
 
 Open [docs](docs) in your browser to access the Swagger UI
 
-To build:
----------
-
-For development:
+## For development
 
 ```sh
 uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 ```
+
+## Build Container
 
 ```sh
 podman build . -t simplevis:pre-trained
@@ -28,8 +25,7 @@ podman build . --build-arg WEIGHTS=flyingthings.pt \
 -t nexus.davenet.local:8080/simplevis/simplevis:flyingthings
 ```
 
-To run:
--------
+## Run Container
 
 With the pre-trained weights:
 
@@ -38,6 +34,7 @@ podman run -d --name simplevis -p 8080:8080 -v simplevis-data:/opt/app-root/src/
 ```
 
 With the custom weights:
+
 ```sh
 podman run -d --name simplevis -p 8080:8080 -v simplevis-data:/opt/app-root/src/simplevis-data simplevis:uavs
 ```
