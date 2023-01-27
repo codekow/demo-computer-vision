@@ -9,7 +9,8 @@ USER 1001
 
 COPY . ./
 
-RUN pip install --no-cache-dir \
+RUN pip install --no-cache-dir -U pip && \
+    pip install --no-cache-dir \
       -r requirements.txt && \
     chown -R 1001:0 ./
 
