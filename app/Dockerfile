@@ -17,5 +17,5 @@ RUN pip install --no-cache-dir -U pip && \
 
 EXPOSE 8080
 
-ENTRYPOINT ["/usr/local/bin/uvicorn"]
+ENTRYPOINT ["/opt/app-root/bin/uvicorn"]
 CMD ["main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
