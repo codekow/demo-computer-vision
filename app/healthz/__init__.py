@@ -6,7 +6,6 @@ app = APIRouter(
     # include_in_schema=False
 )
 
-
 @app.get(
     "",
     summary="Generic Health Check",

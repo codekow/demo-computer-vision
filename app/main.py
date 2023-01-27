@@ -30,12 +30,12 @@ def create_app():
     def root():
         return render_markdown('README.md')
 
-    import api_v1.healthz
+    import healthz
     import api_v1.detect
     import api_v1.file
     # import api_v1.example
 
-    app.include_router(api_v1.healthz.app)
+    app.include_router(healthz.app)
     app.include_router(api_v1.detect.app, prefix="/v1", tags=["latest", "v1"])
     app.include_router(api_v1.file.app, prefix="/v1", tags=["latest", "v1"])
     # app.include_router(api_v1.example.app, prefix="/v1", tags=["latest"])
