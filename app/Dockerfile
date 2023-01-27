@@ -13,7 +13,7 @@ WORKDIR /opt/app-root/src
 
 RUN pip install --no-cache-dir -U pip && \
     pip install --no-cache-dir \
-      -r src/requirements.txt
+      -r requirements.txt
 
 EXPOSE 8080
 
