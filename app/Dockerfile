@@ -1,19 +1,17 @@
 # hadolint global ignore=DL3041
 FROM registry.access.redhat.com/ubi9/python-39:1
-# FROM quay.io/centos/centos:stream9
 
 USER 0
 
 WORKDIR /opt/app-root/src
 
-COPY requirements.txt ./
-
-
-VOLUME /opt/app/root/src
+USER 1001
 
 COPY . ./
 
-USER 1001
+RUN pip install --no-cache-dir \
+      -r requirements.txt && \
+    chown -R 1001:0 ./
 
 EXPOSE 8080
 
