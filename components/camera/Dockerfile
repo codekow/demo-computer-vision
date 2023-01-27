@@ -4,18 +4,6 @@ FROM quay.io/centos/centos:stream9
 
 USER 0
 
-WORKDIR /opt/app-root/src
-
-ARG YOLOv5_VERSION=6.2
-ARG WEIGHTS=yolov5s.pt
-ARG TRAINING_NAME=pretrained
-ARG TRAINING_VER=1.0
-ARG MODEL_CLASSES=coco128.yaml
-ARG ARTI_REPO=http://nexus.davenet.local:8081/repository/simplevis
-
-ENV PYDIR=/usr/local/lib/python3.9/site-packages
-ENV YOLO_DIR=${PYDIR}/yolov5
-
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm \
                    https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-9.noarch.rpm \
                    http://mirror.stream.centos.org/9-stream/CRB/x86_64/os/Packages/ladspa-1.13-28.el9.x86_64.rpm \
@@ -24,14 +12,7 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.n
     dnf -y install git wget python3-pip ffmpeg libGL && \
     dnf clean all
 
-RUN mkdir -p ${PYDIR} && \
-    git clone --branch v${YOLOv5_VERSION} --depth 1 https://github.com/ultralytics/yolov5.git ${YOLO_DIR} && \
-    rm -rf ${YOLO_DIR}/.git && \
-    pip install --no-cache-dir -U pip==22.* && \
-    pip install --no-cache-dir \
-      -r ${YOLO_DIR}/requirements.txt
-
-ENV SIMPLEVIS_DATA=/opt/app-root/
+WORKDIR /opt/app-root/src
 
 COPY requirements.txt ./
 
@@ -40,12 +21,11 @@ RUN pip install --no-cache-dir \
     mkdir -p ${SIMPLEVIS_DATA} && \
     chown -R 1001:0 ${SIMPLEVIS_DATA}
 
-VOLUME /opt/app/root/src
-
-COPY . ./
+VOLUME /data
 
 USER 1001
 
 EXPOSE 8080
+
 ENTRYPOINT ["/usr/local/bin/uvicorn"]
 CMD ["main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]

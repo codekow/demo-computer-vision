@@ -6,4 +6,5 @@
 !requirements.txt
 !main.py
 !api_v1
+!healthz
 !favicon.ico
