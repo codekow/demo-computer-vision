@@ -1,27 +1,24 @@
-#!/bin/bash
+#!/bin/sh
 
 # insert secret code sause for OS based depends
 
-download_yolov7(){
-    echo "Downloading model..."
+download_artifacts(){
+  echo "Downloading artifact..."
 
-    MODEL_URL=https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt
-    MODEL_SRC=https://github.com/WongKinYiu/yolov7/archive/refs/tags/v0.1.tar.gz
-
-    echo MODEL_URL: ${MODEL_URL}
-    echo MODEL_SRC: ${MODEL_SRC}
-
-    # torch model needs the same directory structure to load correctly
-    # https://github.com/pytorch/pytorch/issues/18325
-    curl -sL ${MODEL_SRC} | tar zxf - --strip-components=1
-    
-    # download torch model
-    [ -d data ] || mkdir -p data
-    curl -sL ${MODEL_URL} > ${MODEL_NAME}
-
-    
 }
 
-# download_yolov7
+get_latest_release() {
+  RELEASE="${1}"
 
-${STI_SCRIPTS_PATH}/assemble
+  curl --silent "https://api.github.com/repos/${RELEASE}/releases/latest" | \
+    grep '"tag_name":' | \
+    sed -E 's/.*"([^"]+)".*/\1/'
+}
+
+assemble_s2i_default(){
+  ${STI_SCRIPTS_PATH}/assemble
+}
+
+get_latest_release tiangolo/fastapi
+download_artifacts
+assemble_s2i_default

@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
-run_null(){
+# fallback with sleep to debug your code
+# oc rsh / podman exec -it .. /bin/sh
+run_sleep(){
     echo "Usage: insert here"
     echo ""
     echo "This container does nothing by default."
@@ -9,9 +11,16 @@ run_null(){
     sleep infinity
 }
 
-run_default(){
+# run normal s2i scripts
+run_s2i_default(){
     ${STI_SCRIPTS_PATH}/run
 }
 
-run_default
-run_null
+# unlease the univcorn
+run_uvicorn(){
+    uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+}
+
+run_uvicorn
+run_s2i_default
+run_sleep
