@@ -3,7 +3,5 @@ from pydantic import BaseModel
 class TrainedModel(BaseModel):
     id: str
     name: str
-    author: str
+    author: Optional[str]
     version: float
-    genre: str
-

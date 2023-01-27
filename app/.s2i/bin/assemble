@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# insert secret code sause for OS based depends
+
+download_yolov7(){
+    echo "Downloading model..."
+
+    MODEL_URL=https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt
+    MODEL_SRC=https://github.com/WongKinYiu/yolov7/archive/refs/tags/v0.1.tar.gz
+
+    echo MODEL_URL: ${MODEL_URL}
+    echo MODEL_SRC: ${MODEL_SRC}
+
+    # torch model needs the same directory structure to load correctly
+    # https://github.com/pytorch/pytorch/issues/18325
+    curl -sL ${MODEL_SRC} | tar zxf - --strip-components=1
+    
+    # download torch model
+    [ -d data ] || mkdir -p data
+    curl -sL ${MODEL_URL} > ${MODEL_NAME}
+
+    
+}
+
+# download_yolov7
+
+${STI_SCRIPTS_PATH}/assemble
