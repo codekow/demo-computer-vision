@@ -1,18 +1,19 @@
 # hadolint global ignore=DL3041
 FROM registry.access.redhat.com/ubi9/python-39:1
 
+WORKDIR /opt/app-root
+
+COPY . ./src
+
 USER 0
 
-WORKDIR /opt/app-root/src
+RUN chown -R 1001:0 ./
 
 USER 1001
 
-COPY . ./
-
 RUN pip install --no-cache-dir -U pip && \
     pip install --no-cache-dir \
-      -r requirements.txt && \
-    chown -R 1001:0 ./
+      -r requirements.txt
 
 EXPOSE 8080
 
