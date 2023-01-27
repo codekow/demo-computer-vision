@@ -9,12 +9,12 @@ spec:
       securityContext:
         runAsUser: 1001
         # runAsGroup: 3000
-        # fsGroup: 2000    
+        # fsGroup: 2000
       containers:
         - name: training
           image: nexus.davenet.local:8080/simplevis/train:latest
           # command: [ "/bin/bash", "-c", "--" ]
-          # args: [ "while true; do sleep 30; done;" ]          
+          # args: [ "while true; do sleep 30; done;" ]
           volumeMounts:
             - mountPath: /usr/local/lib/python3.9/site-packages/yolov5/training
               name: training-data
@@ -37,7 +37,7 @@ spec:
             - name: EPOCHS
               value: "1"
             - name: ARTI_REPO
-              value: "http://nexus.davenet.local:8081/repository/simplevis/model"
+              value: "http://nexus.davenet.local:8081/repository/simplevis/"
             - name: ARTI_USER
               value: "simplevis"
             - name: ARTI_PWD
@@ -51,5 +51,4 @@ spec:
           emptyDir: {}
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
-      securityContext: {}
       schedulerName: default-scheduler

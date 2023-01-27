@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck ignore=SC2164
 
 wget -O ${TRAINING_DATA}/dataset.tgz ${ARTI_REPO}/data/training/${DATASET_VER}/${DATASET} \
  && cd ${TRAINING_DATA} \
