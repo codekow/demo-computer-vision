@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck ignore=SC2164
+# shellcheck disable=SC2164,SC2164,SC1107,SC2086
 
 wget -O ${TRAINING_DATA}/dataset.tgz ${ARTI_REPO}/data/training/${DATASET_VER}/${DATASET} \
  && cd ${TRAINING_DATA} \
