@@ -11,13 +11,15 @@ Build model server via source
 s2i strategy: `source`
 
 ```
-APP_NAME=model-serving-cv-dockerfile
+APP_NAME=model-serving-cv
 
 oc new-app \
-  https://github.com/redhat-na-ssa/demo-computer-vision.git \
+  https://github.com/redhat-na-ssa/demo-computer-vision.git#peer-review \
   --name ${APP_NAME} \
   --strategy source \
   --context-dir /components/model
+
+oc label all --all app=demo-computer-vision
 ```
 
 Build model server via `Dockerfile`
@@ -25,9 +27,10 @@ Build model server via `Dockerfile`
 s2i strategy: `docker`
 
 ```
-APP_NAME=model-serving-cv
+APP_NAME=model-serving-cv-dockerfile
 oc new-app \
-  https://github.com/redhat-na-ssa/demo-computer-vision.git \
+  https://github.com/redhat-na-ssa/demo-computer-vision.git#peer-review \
+  --label app=demo-computer-vision \
   --name ${APP_NAME} \
   --strategy docker \
   --context-dir /components/model
@@ -38,8 +41,23 @@ Expose API / model server - Route
 ```
 oc expose service \
   ${APP_NAME} \
+  --label app=demo-computer-vision \
   --port 8080 \
   --overrides='{"spec":{"tls":{"termination":"edge"}}}'
+```
+
+Build camera capture via `Dockerfile`
+
+s2i strategy: `docker`
+
+```
+APP_NAME=camera-capture-cv
+oc new-app \
+  https://github.com/redhat-na-ssa/demo-computer-vision.git#peer-review \
+  --label app=demo-computer-vision \
+  --name ${APP_NAME} \
+  --strategy docker \
+  --context-dir /components/camera
 ```
 
 Setup Liveness Probe
