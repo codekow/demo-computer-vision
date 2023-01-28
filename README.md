@@ -4,9 +4,58 @@
 
 This repo helps to demonstrate the use of computer vision, containers, and openshift
 
+## Quickstart
+
+Build model server via source
+
+s2i strategy: `source`
+
+```
+APP_NAME=model-serving-cv-dockerfile
+
+oc new-app \
+  https://github.com/redhat-na-ssa/demo-computer-vision.git \
+  --name ${APP_NAME} \
+  --strategy source \
+  --context-dir /components/model
+```
+
+Build model server via `Dockerfile`
+
+s2i strategy: `docker`
+
+```
+APP_NAME=model-serving-cv
+oc new-app \
+  https://github.com/redhat-na-ssa/demo-computer-vision.git \
+  --name ${APP_NAME} \
+  --strategy docker \
+  --context-dir /components/model
+```
+
+Expose API / model server - Route
+
+```
+oc expose service \
+  ${APP_NAME} \
+  --port 8080 \
+  --overrides='{"spec":{"tls":{"termination":"edge"}}}'
+```
+
+Setup Liveness Probe
+
+```
+oc set probe deploy/${APP_NAME} \
+  --liveness \
+  --get-url=http://:8080/healthz
+```
+
 ## TODO
+
 - [ ] tell story
 - [ ] address dependencies
+
+## Stuff
 
 Figure 3
 ![Figure 1](docs/simplevis-figs-3.jpg)
