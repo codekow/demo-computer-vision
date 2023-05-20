@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# insert secret code sause for OS based depends
+
+download_artifacts(){
+  echo "Downloading artifact..."
+
+}
+
+get_latest_release() {
+  RELEASE="${1}"
+
+  curl --silent "https://api.github.com/repos/${RELEASE}/releases/latest" | \
+    grep '"tag_name":' | \
+    sed -E 's/.*"([^"]+)".*/\1/'
+}
+
+assemble_s2i_default(){
+  ${STI_SCRIPTS_PATH}/assemble
+}
+
+get_latest_release tiangolo/fastapi
+download_artifacts
+assemble_s2i_default

@@ -10,5 +10,5 @@ spec:
     name: pretrained-service
     weight: 100
   port:
-    targetPort: 8000
+    targetPort: 8080
   wildcardPolicy: None

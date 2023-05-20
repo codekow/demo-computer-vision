@@ -1,6 +1,9 @@
 # scratch
 generated/
 scratch/
+data/
+
+dictionary.dic
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -131,13 +134,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-# yolo artifacts
-*.pt
-detected-files
-uploaded-files
-yolov5
-
-# VIM
-tags
-*.swp
