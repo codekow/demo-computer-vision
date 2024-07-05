@@ -9,7 +9,7 @@ UPGRADE_PIP_TO_LATEST=true
 #APP_CONFIG=config.py
 
 # uncomment below to run application w/o gunicorn
-APP_FILE=main.py
+# APP_FILE=app.py
 
 # add proxy config via s2i scripts (no secrets)
 

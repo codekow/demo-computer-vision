@@ -19,7 +19,7 @@ run_s2i_default(){
 # unlease the univcorn
 run_uvicorn(){
     echo "Running uvicorn in developer (reload) mode..."
-    uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+    uvicorn app:app --host 0.0.0.0 --port 8080 --reload
 }
 
 run_uvicorn

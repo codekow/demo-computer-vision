@@ -4,4 +4,5 @@ python-multipart
 pyyaml==5.3.1
 pytest-shutil
 yolov5==7.0.*
-pydantic
+pydantic==2.4.*
+Pillow==9.5.0
