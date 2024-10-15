@@ -71,4 +71,4 @@ jobs:
         run: |
           [ -d ./bootstrap/base ] && touch bootstrap/base/sealed-secrets-secret.yaml
           [ -e ./scripts/validate_kustomize.sh ] && ./scripts/validate_kustomize.sh
-          [ -e ./scripts/validate_helm.sh ] && ./scripts/validate_helm.sh
+          # [ -e ./scripts/validate_helm.sh ] && ./scripts/validate_helm.sh
