@@ -18,8 +18,8 @@ COPY requirements.txt ./
 
 RUN pip install --no-cache-dir \
       -r requirements.txt && \
-    mkdir -p ${SIMPLEVIS_DATA} && \
-    chown -R 1001:0 ${SIMPLEVIS_DATA}
+    mkdir -p "${SIMPLEVIS_DATA}" && \
+    chown -R 1001:0 "${SIMPLEVIS_DATA}"
 
 VOLUME /data
 

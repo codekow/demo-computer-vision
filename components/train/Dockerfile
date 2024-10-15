@@ -1,3 +1,4 @@
+# hadolint global ignore=DL3013
 # FROM ubi9:latest
 # FROM quay.io/centos/centos:stream9
 FROM docker.io/nvidia/cuda:11.7.0-runtime-ubi8
@@ -20,10 +21,11 @@ ENV ARTI_USER=simplevis
 ENV ARTI_PWD=simplevis123
 
 RUN dnf install -y git wget libGL python39 \
- && pip-3.9 install --upgrade pip \
- && pip-3.9 install --pre torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/nightly/cu117 \
+ && pip-3.9 install --no-cache-dir --upgrade pip \
+ && pip-3.9 install --no-cache-dir --pre torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/nightly/cu117 \
  && dnf clean all
 
+# hadolint ignore=DL3003
 RUN mkdir -p ${PYDIR} \
  && cd ${PYDIR} \
  && git clone --branch v${YOLOv5_VERSION} --depth 1 https://github.com/ultralytics/yolov5.git \
@@ -34,6 +36,7 @@ ENV TRAINING_DATA=${YOLO_DIR}/training
 
 COPY requirements.txt /opt/app-root/src/
 
+# hadolint ignore=DL3003
 RUN cd /opt/app-root/src \
  && pip-3.9 install --no-cache-dir -r requirements.txt \
  && mkdir -p ${TRAINING_DATA} \
