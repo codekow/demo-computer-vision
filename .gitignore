@@ -2,6 +2,7 @@
 generated/
 scratch/
 data/
+tmp
 
 dictionary.dic
 
