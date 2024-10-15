@@ -1,6 +1,7 @@
 arg
 cuda
 cv
+dataset
 davenet
 dir
 entrypoint
@@ -25,6 +26,7 @@ pytorch
 Quickstart
 redhat
 repo
+runtime
 shm
 simplevis
 smi
