@@ -1,24 +1,46 @@
 #!/bin/sh
+set -e
 
-# insert secret code sause for OS based depends
-
-download_artifacts(){
-  echo "Downloading artifact..."
-
+usage(){
+  "${STI_SCRIPTS_PATH}/usage"
 }
 
-get_latest_release() {
-  RELEASE="${1}"
+debug(){
+  echo "
+    This process is runing as $(id)
+    Path: $(pwd)
+  "
+}
 
-  curl --silent "https://api.github.com/repos/${RELEASE}/releases/latest" | \
-    grep '"tag_name":' | \
-    sed -E 's/.*"([^"]+)".*/\1/'
+download_dataset(){
+  echo "
+    Embed an artifact inside your container for edge / disconnected use...
+    
+    Example: curl https://bulk.openweathermap.org/snapshot/{BULK_FILE_NAME}?appid={API key} > /data/weather.csv
+  "
+}
+
+restore_artifacts(){
+  # restore artifacts from a previous build (if they exist)
+
+  if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
+    echo "---> Restoring build artifacts..."
+    mv /tmp/artifacts/* /opt/app-root/etc
+  fi
+}
+
+assemble_s2i_override(){
+  # handle other dependencies here
+  debug
+  download_dataset
 }
 
 assemble_s2i_default(){
-  ${STI_SCRIPTS_PATH}/assemble
+  echo "Resume default assemble"
+  /usr/libexec/s2i/assemble
 }
 
-get_latest_release tiangolo/fastapi
-download_artifacts
+usage
+assemble_s2i_override
+# restore_artifacts
 assemble_s2i_default
