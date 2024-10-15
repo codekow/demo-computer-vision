@@ -29,9 +29,10 @@ def create_app():
         response_class=HTMLResponse,
         summary="General Info",
     )
-    @app.get("/favicon.ico", include_in_schema=False)
-    async def favicon():
-        return FileResponse(favicon_path)
+
+    # @app.get("/favicon.ico", include_in_schema=False)
+    # async def favicon():
+    #     return FileResponse(favicon_path)
 
     def root():
         return render_markdown("README.md")
