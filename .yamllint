@@ -4,3 +4,6 @@ rules:
   document-start: disable
   line-length: disable
   comments-indentation: disable
+
+ignore:
+  /venv/

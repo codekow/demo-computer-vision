@@ -1,0 +1,54 @@
+---
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: training-job
+spec:
+  template:
+    spec:
+      securityContext:
+        runAsUser: 1001
+        # runAsGroup: 3000
+        # fsGroup: 2000
+      containers:
+        - name: training
+          image: nexus.davenet.local:8080/simplevis/train:latest
+          # command: [ "/bin/bash", "-c", "--" ]
+          # args: [ "while true; do sleep 30; done;" ]
+          volumeMounts:
+            - mountPath: /usr/local/lib/python3.9/site-packages/yolov5/training
+              name: training-data
+          resources: {}
+          env:
+            - name: TRAINING_NAME
+              value: "uavs"
+            - name: TRAINING_VER
+              value: "1.0"
+            - name: DATASET
+              value: "dataset_uavs.tgz"
+            - name: MODEL_CLASSES
+              value: "coco_uavs.yml"
+            - name: YOLOv5_VERSION
+              value: "6.2"
+            - name: WEIGHTS
+              value: "yolov5s.pt"
+            - name: BATCH_SIZE
+              value: "2"
+            - name: EPOCHS
+              value: "1"
+            - name: ARTI_REPO
+              value: "http://nexus.davenet.local:8081/repository/simplevis/"
+            - name: ARTI_USER
+              value: "simplevis"
+            - name: ARTI_PWD
+              value: "simplevis123"
+            - name: TRAINING_DATA
+              value: "/usr/local/lib/python3.9/site-packages/yolov5/training"
+      restartPolicy: Never
+      backoffLimit: 1
+      volumes:
+        - name: training-data
+          emptyDir: {}
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      schedulerName: default-scheduler

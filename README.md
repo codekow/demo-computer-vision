@@ -1,37 +1,85 @@
-FastAPI Simple Object Detection
-===============================
+# Computer Vision Demo
 
-To build:
----------
+[![File Linting](https://github.com/redhat-na-ssa/simplevis/actions/workflows/linting.yaml/badge.svg)](https://github.com/redhat-na-ssa/simplevis/actions/workflows/linting.yaml)
 
-```sh
-podman build . -t simplevis:pretrained
-podman build . --build-arg WEIGHTS=coco_uavs -t simplevis:uavs
+This repo helps to demonstrate the use of computer vision, containers, and openshift
+
+## Quickstart
+
+Build model server via source
+
+s2i strategy: `source`
+
+```
+APP_NAME=model-serving-cv
+
+oc new-app \
+  https://github.com/redhat-na-ssa/demo-computer-vision.git#peer-review \
+  --name ${APP_NAME} \
+  --strategy source \
+  --context-dir /components/model
+
+oc label all --all app=demo-computer-vision
 ```
 
-podman build . --build-arg WEIGHTS=flyingthings.pt \
---build-arg TRAINING_NAME=flyingthings \
---build-arg MODEL_CLASSES=flyingthings.yaml \
---build-arg TRAINING_VER=1.0 \
--t nexus.davenet.local:8080/simplevis/simplevis:flyingthings
+Build model server via `Dockerfile`
 
-To run:
--------
+s2i strategy: `docker`
 
-With the pretrained weights:
-
-```sh
-podman run -d --name simplevis -p 8000:8000 -v simplevis-data:/opt/app-root/src/simplevis-data simplevis:pretrained
+```
+APP_NAME=model-serving-cv-dockerfile
+oc new-app \
+  https://github.com/redhat-na-ssa/demo-computer-vision.git#peer-review \
+  --label app=demo-computer-vision \
+  --name ${APP_NAME} \
+  --strategy docker \
+  --context-dir /components/model
 ```
 
-With the custom weights:
-```sh
-podman run -d --name simplevis -p 8000:8000 -v simplevis-data:/opt/app-root/src/simplevis-data simplevis:uavs
+Expose API / model server - Route
+
+```
+oc expose service \
+  ${APP_NAME} \
+  --label app=demo-computer-vision \
+  --port 8080 \
+  --overrides='{"spec":{"tls":{"termination":"edge"}}}'
 ```
 
+Build camera capture via `Dockerfile`
 
-To access:
-----------
+s2i strategy: `docker`
 
-Open on http://localhost:8000/docs in your browser to access the Swagger UI
+```
+APP_NAME=camera-capture-cv
+oc new-app \
+  https://github.com/redhat-na-ssa/demo-computer-vision.git#peer-review \
+  --label app=demo-computer-vision \
+  --name ${APP_NAME} \
+  --strategy docker \
+  --context-dir /components/camera
+```
 
+Setup Liveness Probe
+
+```
+oc set probe deploy/${APP_NAME} \
+  --liveness \
+  --get-url=http://:8080/healthz
+```
+
+## TODO
+
+- [ ] tell story
+- [ ] address dependencies
+
+## Stuff
+
+Figure 3
+![Figure 1](docs/simplevis-figs-3.jpg)
+
+Figure 4
+![Figure 1](docs/simplevis-figs-4.jpg)
+
+Figure 5
+![Figure 1](docs/simplevis-figs-5.jpg)

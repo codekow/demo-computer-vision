@@ -29,7 +29,7 @@ spec:
           image: nexus.davenet.local:8080/simplevis/simplevis:pretrained
           imagePullPolicy: Always
           ports:
-            - containerPort: 8000
+            - containerPort: 8080
               protocol: TCP
           volumeMounts:
             - mountPath: /opt/app-root/src/simplevis-data

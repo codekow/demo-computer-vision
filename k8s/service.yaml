@@ -9,9 +9,9 @@ spec:
     app: simplevis-pretrained
   ports:
     - protocol: TCP
-      port: 8000
+      port: 8080
   readinessProbe:
     tcpSocket:
-      port: 8000
+      port: 8080
     initialDelaySeconds: 5
     periodSeconds: 10
