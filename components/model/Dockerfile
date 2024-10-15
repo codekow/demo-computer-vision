@@ -1,5 +1,5 @@
-# hadolint global ignore=DL3041
-FROM registry.access.redhat.com/ubi9/python-39:1
+# hadolint global ignore=DL3041,DL3013
+FROM registry.access.redhat.com/ubi9/python-311:1
 
 COPY . /opt/app-root/src
 

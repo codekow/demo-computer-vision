@@ -10,7 +10,7 @@ Build model server via source
 
 s2i strategy: `source`
 
-```
+```sh
 APP_NAME=model-serving-cv
 
 oc new-app \
@@ -26,7 +26,7 @@ Build model server via `Dockerfile`
 
 s2i strategy: `docker`
 
-```
+```sh
 APP_NAME=model-serving-cv-dockerfile
 oc new-app \
   https://github.com/redhat-na-ssa/demo-computer-vision.git#peer-review \
@@ -38,7 +38,7 @@ oc new-app \
 
 Expose API / model server - Route
 
-```
+```sh
 oc expose service \
   ${APP_NAME} \
   --label app=demo-computer-vision \
@@ -50,7 +50,7 @@ Build camera capture via `Dockerfile`
 
 s2i strategy: `docker`
 
-```
+```sh
 APP_NAME=camera-capture-cv
 oc new-app \
   https://github.com/redhat-na-ssa/demo-computer-vision.git#peer-review \
@@ -62,7 +62,7 @@ oc new-app \
 
 Setup Liveness Probe
 
-```
+```sh
 oc set probe deploy/${APP_NAME} \
   --liveness \
   --get-url=http://:8080/healthz
@@ -72,14 +72,3 @@ oc set probe deploy/${APP_NAME} \
 
 - [ ] tell story
 - [ ] address dependencies
-
-## Stuff
-
-Figure 3
-![Figure 1](docs/simplevis-figs-3.jpg)
-
-Figure 4
-![Figure 1](docs/simplevis-figs-4.jpg)
-
-Figure 5
-![Figure 1](docs/simplevis-figs-5.jpg)
