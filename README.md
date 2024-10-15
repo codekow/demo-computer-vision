@@ -1,5 +1,6 @@
 # Computer Vision Demo
 
+[![Check Spelling](https://github.com/codekow/demo-computer-vision/actions/workflows/spellcheck.yaml/badge.svg)](https://github.com/codekow/demo-computer-vision/actions/workflows/spellcheck.yaml)
 [![File Linting](https://github.com/redhat-na-ssa/simplevis/actions/workflows/linting.yaml/badge.svg)](https://github.com/redhat-na-ssa/simplevis/actions/workflows/linting.yaml)
 
 This repo helps to demonstrate the use of computer vision, containers, and openshift
