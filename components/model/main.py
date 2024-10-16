@@ -58,6 +58,6 @@ if __name__ == "__main__":
     # Use this for debugging purposes only
     import uvicorn
 
-    # uvicorn main:app --host 0.0.0.0 --port 8080 --reload
-    # uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True)
-    uvicorn.run("main:app", port=8080, reload=True)
+    # uvicorn main:app --host 0.0.0.0 --port 8080 --workers 2 --reload
+    # uvicorn.run("main:app", host="0.0.0.0", port=8080, workers=2 reload=True)
+    uvicorn.run("main:app", port=8080, workers=2, reload=True)
